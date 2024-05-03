@@ -50,12 +50,9 @@ BEGIN_PM:
 ; Data
 BOOT_DRIVE db 0 ; Reserved mem address
 
-MSG_16_BOOT:
-  db "Successfully booted into 16-bit real mode.", 0
-MSG_LOAD_KERNEL:
-  db "Loading kernel from disk...", 0
-MSG_32_BOOT:
-  db "Successfully booted into 32-bit protected mode.", 0
+MSG_16_BOOT db "Successfully booted into 16-bit real mode.", 0
+MSG_LOAD_KERNEL db "Loading kernel from disk...", 0
+MSG_32_BOOT db "Successfully booted into 32-bit protected mode.", 0
 
 
 ; filler and magic number
