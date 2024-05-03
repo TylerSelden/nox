@@ -8,8 +8,8 @@ set -m
 websockify_pid=$!
 
 # Start the second process in the background
-#qemu-system-i386 -drive format=raw,file=./build/os.bin -vnc :0 &
-qemu-system-i386 -fda ./build/os.bin -vnc :0 &
+qemu-system-i386 -drive format=raw,if=floppy,file=./build/os.bin -vnc :0 &
+#qemu-system-i386 -fda ./build/os.bin -vnc :0 &
 qemu_pid=$!
 
 # Function to clean up when script receives SIGINT
