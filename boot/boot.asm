@@ -1,60 +1,37 @@
-[org 0x7c00]
-KERNEL_OFFSET equ 0x1000 ; Where the kernel gets loaded to
-; Store dl, in case it gets overwritten
-mov [BOOT_DRIVE], dl
-; Set the stack
-mov bp, 0x9000
-mov sp, bp
+MBALIGN   equ 1 << 0
+MEMINFO   equ 1 << 1
+MBFLAGS   equ MBALIGN | MEMINFO
+MAGIC     equ 0x1BADB002
+CHECKSUM  equ -(MAGIC + MBFLAGS)
+
+section .multiboot
+align 4
+  dd MAGIC
+  dd MBFLAGS
+  dd CHECKSUM
 
 
-; Success message
-mov bx, MSG_16_BOOT
-call printf
 
-; Start booting into 32 bit prot mode
-call load_kernel ; Load the kernel from disk
-call switch_to_pm
+section .bss
+stack_bottom:
+resb 16384 ; 8 KiB
+stack_top:
 
 
-; In the bootloader, this point should never be reached
-; It's put there to prevent inclusions from running
-jmp $
-
-; Inclusions
-%include "./lib/print.asm"
-%include "./lib/disk.asm"
-%include "./lib/pm/gdt.asm"
-%include "./lib/pm/switchtopm.asm"
-[bits 16]
 
 
-load_kernel:
-  mov bx, MSG_LOAD_KERNEL
-  call printf
+section .text
+global _start:function (_start.end - _start)
+_start:
+  mov esp, stack_top
 
-  mov bx, KERNEL_OFFSET
-  mov dh, 5 ; Number of sectors to load
-  mov dl, [BOOT_DRIVE]
-  call loadsectors
-  ret
-
-; 32 bit prot mode
-[bits 32]
-BEGIN_PM:
-  mov ebx, MSG_32_BOOT
-  call print_pm
-  call KERNEL_OFFSET ; Go to kernel entrypoint
-  ret
+  extern kernel_main
+  call kernel_main
 
 
-; Data
-BOOT_DRIVE db 0 ; Reserved mem address
 
-MSG_16_BOOT db "Successfully booted into 16-bit real mode.", 0
-MSG_LOAD_KERNEL db "Loading kernel from disk...", 0
-MSG_32_BOOT db "Successfully booted into 32-bit protected mode.", 0
-
-
-; filler and magic number
-times 510-($-$$) db 0
-dw 0xaa55
+  cli
+.hang:
+  hlt
+  jmp .hang
+.end:

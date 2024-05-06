@@ -4,16 +4,12 @@ setup:
 	@rm -rf ./build/*
 
 build: FORCE
-	@gcc -ffreestanding -c -fno-pie -m32 ./kernel/kernel.c -o ./build/kernel.o
-	@nasm ./lib/kernel/kernel_entry.asm -f elf -o build/kernel_entry.o
-	@ld ./build/kernel_entry.o ./build/kernel.o -m elf_i386 -Ttext 0x1000 --oformat binary -o ./build/kernel.bin
-	
-	@nasm -f bin ./boot/boot.asm -o ./build/boot.bin
-	
-	@cat ./build/boot.bin ./build/kernel.bin > ./build/os.bin
-	
-#	@truncate -s 1440k ./build/os.bin
-
+	@nasm -felf32 ./boot/boot.asm -o ./build/boot.o
+	@i686-elf-gcc -c ./kernel/kernel.c -o ./build/kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
+	@i686-elf-gcc -T ./linker/linker.ld -o ./output/os.bin -ffreestanding -O2 -nostdlib ./build/boot.o ./build/kernel.o -lgcc
+	# Create GRUB ISO
+	@cp ./output/os.bin ./grub/boot/os.bin
+	@grub-mkrescue -o ./output/os.iso ./grub
 run:
 	@./utils/start.sh
 #	@qemu-system-i386 -drive format=raw,file=./build/boot.bin -vnc :0
