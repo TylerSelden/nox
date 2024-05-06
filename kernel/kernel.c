@@ -5,16 +5,21 @@
 #include <stdint.h>
  
 // included libs
-#include "./libc/io.c"
-#include "./libc/vga.c"
+#include "../drivers/io/io.c"
+#include "../drivers/vga/vga.c"
+#include "../drivers/keyboard/keyboard.c"
 
 void main() {
   // disable cursor?
   vga_init();
+  
+  vga_printf("Welcome to Nox!");
+  vga_printf("\nThis is the beginnings of an amateur-made OS. At the moment, it can't do much.");
+  vga_printf("\nHopefully soon it can support some kind of filesystem, and commands, but in the meantime, enjoy.\n");
+  vga_print("> ");
+  enableKeyboard();
 
-  vga_printf("Coordinates of cursor:");
-  vga_print("X: ");
-  vga_printHexf(vga_getCursorX());
-  vga_print("Y: ");
-  vga_printHexf(vga_getCursorY());
+  while (true) {
+    handleKeyboardInput();
+  }
 }

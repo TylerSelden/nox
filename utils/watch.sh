@@ -1,1 +1,1 @@
-nodemon --exec make -w boot -w kernel -w lib -w libc -e asm,c,h
+nodemon --exec make -w boot -w kernel -w drivers -e asm,c,h
