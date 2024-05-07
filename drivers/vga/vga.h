@@ -13,24 +13,31 @@ static uint8_t vga_getCursorY();
 static void vga_moveCursorTo(uint8_t x, uint8_t y);
 static void vga_moveCursorX(uint8_t x);
 static void vga_moveCursorY(uint8_t y);
-static void vga_addCursorX(uint8_t x);
-static void vga_addCursorY(uint8_t y);
+static uint8_t vga_addCursorX(uint8_t x);
+static uint8_t vga_addCursorY(uint8_t y);
 
 
 static char *vga_xyToVidmem(uint8_t x, uint8_t y);
 static char *vga_cursorToVidmem();
 
-static void vga_newl();
+static void newl();
+static void scroll();
+static void overflow();
 
-static void vga_print(char *str);
-static void vga_printChar(char str);
-static void vga_printf(char *str);
+static void print(char *str);
+static void printc(char str);
+static void printf(char *str);
 
+static void vga_clearRow(uint8_t row);
 static void vga_clearScreen();
 
-static void vga_printHex(uint8_t hex);
-static void vga_printHexf(uint8_t hex);
+static void printh(uint8_t hex);
+static void printhf(uint8_t hex);
 
 static void vga_init();
 
 static bool vga_specialChar(char str);
+
+
+#include "./cursor.c"
+#include "./vga.c"

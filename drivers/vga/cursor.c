@@ -51,11 +51,15 @@ static void vga_moveCursorY(uint8_t y) {
   vga_moveCursorTo(vga_getCursorX(), y);
 }
 
-static void vga_addCursorX(uint8_t x) {
-  vga_moveCursorX(vga_getCursorX() + x);
+static uint8_t vga_addCursorX(uint8_t x) {
+  x = vga_getCursorX() + x;
+  vga_moveCursorX(x);
+  return x;
 }
 
-static void vga_addCursorY(uint8_t y) {
-  vga_moveCursorY(vga_getCursorY() + y);
+static uint8_t vga_addCursorY(uint8_t y) {
+  y = vga_getCursorY() + y;
+  vga_moveCursorY(y);
+  return y;
 }
 

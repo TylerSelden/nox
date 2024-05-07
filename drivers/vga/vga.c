@@ -1,13 +1,3 @@
-#define VGA_VIDMEM_START 0xb8000
-#define VGA_WIDTH 80
-#define VGA_HEIGHT 25
-#define VGA_MAX_VIDMEM_LEN VGA_WIDTH * VGA_HEIGHT * 2
-
-
-#include "./vga.h"
-#include "./cursor.c"
-
-
 static char *vga_xyToVidmem(uint8_t x, uint8_t y) {
   char *vidmem = (char*) VGA_VIDMEM_START;
   vidmem += x * 2;
@@ -23,56 +13,79 @@ static char *vga_cursorToVidmem() {
 }
 
 
-static void vga_newl() {
+static void newl() {
   vga_moveCursorX(0);
-  vga_addCursorY(1);
-  if (vga_getCursorY() >= VGA_HEIGHT) vga_moveCursorY(0);
+  if (vga_addCursorY(1) >= VGA_HEIGHT) scroll();
 }
 
-static void vga_printChar(char str) {
+static void scroll() {
+  // clear out first row
+  vga_clearRow(0);
+  // for each row (1 through WIDTH-1), shift it up 1
+  for (uint8_t y = 1; y < VGA_HEIGHT; y++) {
+    for (uint8_t x = 0; x < VGA_WIDTH; x++) {
+      *vga_xyToVidmem(x, y - 1) = *vga_xyToVidmem(x, y);
+    }
+  }
+  // clear last row
+  vga_clearRow(VGA_HEIGHT - 1);
+  vga_addCursorY(-1);
+}
+
+static void overflow() {
+  if (vga_getCursorX() >= VGA_WIDTH) newl();
+  if (vga_getCursorY() >= VGA_HEIGHT) scroll();
+}
+
+static void printc(char str) {
   if (vga_specialChar(str)) return;
   char *vidmem = vga_cursorToVidmem();
-  vga_addCursorX(1);
-  if (vga_getCursorX() >= VGA_WIDTH) vga_newl();
+  if (vga_addCursorX(1) >= VGA_WIDTH) overflow();
   *vidmem++ = str;
   *vidmem   = 0x0f;
 }
 
 
-
-static void vga_print(char *str) {
+static void print(char *str) {
   char *vidmem = (char*) vga_cursorToVidmem();
   while (*str) {
-    vga_printChar(*str);
+    printc(*str);
     *str++;
   }
 }
 
-static void vga_printf(char *str) {
-  vga_print(str);
-  vga_newl();
+static void printf(char *str) {
+  print(str);
+  newl();
+}
+
+static void vga_clearRow(uint8_t row) {
+  char *row_start = (char*) VGA_VIDMEM_START + (VGA_WIDTH * row * 2);
+  char *row_end = (char*) row_start + (VGA_WIDTH * 2) - 1;
+  for (char *i = row_start; i < row_end; i += 2) {
+    *i = 0x00;
+    *(i + 1) = 0x0f;
+  }
 }
 
 static void vga_clearScreen() {
-  for (char *i = (char*) VGA_VIDMEM_START; i < (char*) VGA_VIDMEM_START + VGA_MAX_VIDMEM_LEN; i += 2) {
-    *i = 0x0000;
+  for (uint8_t row = 0; row < VGA_HEIGHT; row++) {
+    vga_clearRow(row);
   }
-  for (uint8_t i = 0; i < (VGA_MAX_VIDMEM_LEN - VGA_VIDMEM_START) / 2; i++) {
-    vga_printChar(' ');
-  }
+  return;
   vga_moveCursorTo(0, 0);
 }
 
-static void vga_printHex(uint8_t hex) {
+static void printh(uint8_t hex) {
   char hexMap[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-  vga_printChar(hexMap[(hex & 0xF0) >> 4]);
-  vga_printChar(hexMap[(hex & 0x0F) >> 0]);
+  printc(hexMap[(hex & 0xF0) >> 4]);
+  printc(hexMap[(hex & 0x0F) >> 0]);
 }
 
-static void vga_printHexf(uint8_t hex) {
-  vga_print("0x");
-  vga_printHex(hex);
-  vga_newl();
+static void printhf(uint8_t hex) {
+  print("0x");
+  printh(hex);
+  newl();
 }
 
 static void vga_init() {
@@ -86,10 +99,10 @@ static void vga_init() {
 
 static bool vga_specialChar(char str) {
   if (str == '\n') {
-    vga_newl();
+    newl();
   } else if (str == '\t') {
-    vga_printChar(' ');
-    vga_printChar(' ');
+    printc(' ');
+    printc(' ');
   } else if (str == '\r') {
     vga_moveCursorX(0);
   } else if (str == '\b') {
