@@ -63,3 +63,71 @@ static uint8_t vga_addCursorY(uint8_t y) {
   return y;
 }
 
+// these functions are protected versions of the above
+static void vga_cursorLeft() {
+  if (vga_getCursorX() <= 0) {
+    if (vga_getCursorY() <= 0) {
+      vga_moveCursorTo(0, 0);
+    } else {
+      vga_moveCursorTo(VGA_WIDTH - 1, vga_getCursorY() - 1);
+    }
+  } else {
+    vga_addCursorX(-1);
+  }
+}
+
+static void vga_cursorUp() {
+  if (vga_getCursorY() <= 0) {
+    vga_moveCursorTo(0, 0);
+  } else {
+    vga_addCursorY(-1);
+  }
+}
+
+
+static void vga_cursorRight() {
+  vga_addCursorX(1);
+  overflow();
+}
+
+static void vga_cursorDown() {
+  vga_addCursorY(1);
+  overflow();
+}
+
+// formatted / pretty versions
+
+static void vga_cursorLeftf() {
+  // move cursor left until non-null character, or end of vidmem
+  vga_cursorLeft();
+  char *vidmem = vga_cursorToVidmem();
+  while (vga_getCursorX() > 0 && *(vidmem - 2) == 0x00) {
+    vga_cursorLeft();
+    vidmem -= 2;
+  }
+}
+
+static void vga_cursorUpf() {
+  vga_cursorUp();
+  char *vidmem = vga_cursorToVidmem();
+  while (vga_getCursorX() > 0 && *(vidmem - 2) == 0x00) {
+    vga_cursorLeft();
+    vidmem -= 2;
+  }
+}
+
+static void vga_cursorRightf() {
+  char *vidmem = vga_cursorToVidmem();
+  if (*vidmem != 0x00) vga_cursorRight();
+}
+
+static void vga_cursorDownf() {
+  vga_cursorDown();
+  char *vidmem = vga_cursorToVidmem();
+  while (vga_getCursorX() > 0 && *(vidmem - 2) == 0x00) {
+    vga_cursorLeft();
+    vidmem -= 2;
+  }
+}
+
+

@@ -39,6 +39,18 @@ static uint8_t vga_addCursorX(uint8_t x);
 static uint8_t vga_addCursorY(uint8_t y);
 
 
+uint8_t vga_cursorXMax = 0;
+static void vga_cursorLeft();
+static void vga_cursorUp();
+static void vga_cursorRight();
+static void vga_cursorDown();
+
+static void vga_cursorLeftf();
+static void vga_cursorUpf();
+static void vga_cursorRightf();
+static void vga_cursorDownf();
+
+
 static char *vga_xyToVidmem(uint8_t x, uint8_t y);
 static char *vga_cursorToVidmem();
 

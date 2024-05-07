@@ -15,5 +15,6 @@ static bool keyboard_handleSpecialChar(uint8_t scanCode);
 
 
 uint8_t lastScanCode;
+char keyBuf;
 static void enableKeyboard();
 static void handleKeyboardInput();

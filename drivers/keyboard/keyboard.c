@@ -1,6 +1,7 @@
 #include "./chars.c"
 
 uint8_t lastScanCode = 0;
+char keyBuf = 0;
 
 static void enableKeyboard() {
   outb(KEYBOARD_CMD_PORT, 0xae);
@@ -9,7 +10,7 @@ static void enableKeyboard() {
 
 static void handleKeyboardInput() {
   uint8_t scanCode = inb(KEYBOARD_DATA_PORT);
-  if (scanCode == 0 || scanCode == lastScanCode) return;
+  if (scanCode == lastScanCode) return;
   lastScanCode = scanCode;
   // get char
   char str = kbdus[scanCode];
@@ -21,5 +22,5 @@ static void handleKeyboardInput() {
   if (scanCode >= 0x80) return;
 
 
-  printc(str);
+  keyBuf = str;
 }

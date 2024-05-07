@@ -112,19 +112,9 @@ static bool vga_specialChar(char str) {
     vga_moveCursorX(0);
   } else if (str == '\b') {
     // backspace
-    // move cursor backwards
-    if (vga_getCursorX() == 0) {
-      if (vga_getCursorY() == 0) {
-        vga_moveCursorTo(0, 0);
-      } else {
-        vga_moveCursorTo(VGA_WIDTH - 1, vga_getCursorY() - 1);
-      }
-    } else {
-      vga_addCursorX(-1);
-    }
-
+    vga_cursorLeftf();
     char *vidmem = vga_cursorToVidmem();
-    *vidmem++ = ' ';
+    *vidmem++ = 0x00;
     *vidmem   = 0x0f;
 
   } else {
