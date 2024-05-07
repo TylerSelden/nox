@@ -1,3 +1,5 @@
+#include "./cursor.c"
+
 static char *vga_xyToVidmem(uint8_t x, uint8_t y) {
   char *vidmem = (char*) VGA_VIDMEM_START;
   vidmem += x * 2;
@@ -12,6 +14,10 @@ static char *vga_cursorToVidmem() {
   return vidmem;
 }
 
+
+static void changeColor(enum vga_color fg, enum vga_color bg) {
+  color = fg | bg << 4;
+}
 
 static void newl() {
   vga_moveCursorX(0);
@@ -42,15 +48,14 @@ static void printc(char str) {
   char *vidmem = vga_cursorToVidmem();
   if (vga_addCursorX(1) >= VGA_WIDTH) overflow();
   *vidmem++ = str;
-  *vidmem   = 0x0f;
+  *vidmem   = color;
 }
 
 
 static void print(char *str) {
-  char *vidmem = (char*) vga_cursorToVidmem();
   while (*str) {
     printc(*str);
-    *str++;
+    str++;
   }
 }
 
@@ -88,7 +93,7 @@ static void printhf(uint8_t hex) {
   newl();
 }
 
-static void vga_init() {
+static void vgaInit() {
   // enable cursor, set to 0, 0
   vga_enableCursor(14, 15);
   vga_moveCursorTo(0, 0);

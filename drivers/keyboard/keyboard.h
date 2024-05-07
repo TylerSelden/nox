@@ -17,7 +17,3 @@ static bool keyboard_handleSpecialChar(uint8_t scanCode);
 uint8_t lastScanCode;
 static void enableKeyboard();
 static void handleKeyboardInput();
-
-
-#include "./chars.c"
-#include "./keyboard.c"

@@ -3,6 +3,28 @@
 #define VGA_HEIGHT 25
 #define VGA_MAX_VIDMEM_LEN VGA_WIDTH * VGA_HEIGHT * 2
 
+enum vga_color {
+	vga_color_black = 0,
+	vga_color_blue = 1,
+  vga_color_green = 2,
+	vga_color_cyan = 3,
+	vga_color_red = 4,
+	vga_color_magenta = 5,
+	vga_color_brown = 6,
+	vga_color_light_grey = 7,
+	vga_color_dark_grey = 8,
+	vga_color_light_blue = 9,
+	vga_color_light_green = 10,
+	vga_color_light_cyan = 11,
+	vga_color_light_red = 12,
+	vga_color_light_magenta = 13,
+	vga_color_light_brown = 14,
+	vga_color_white = 15,
+};
+
+uint8_t color = vga_color_white | vga_color_black << 4;
+
+
 static void vga_enableCursor(uint8_t cursor_start, uint8_t cursor_end);
 static void vga_disableCursor();
 
@@ -20,6 +42,8 @@ static uint8_t vga_addCursorY(uint8_t y);
 static char *vga_xyToVidmem(uint8_t x, uint8_t y);
 static char *vga_cursorToVidmem();
 
+static void changeColor(enum vga_color fg, enum vga_color bg);
+
 static void newl();
 static void scroll();
 static void overflow();
@@ -34,10 +58,6 @@ static void vga_clearScreen();
 static void printh(uint8_t hex);
 static void printhf(uint8_t hex);
 
-static void vga_init();
+static void vgaInit();
 
 static bool vga_specialChar(char str);
-
-
-#include "./cursor.c"
-#include "./vga.c"

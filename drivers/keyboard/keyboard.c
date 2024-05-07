@@ -1,3 +1,5 @@
+#include "./chars.c"
+
 uint8_t lastScanCode = 0;
 
 static void enableKeyboard() {
