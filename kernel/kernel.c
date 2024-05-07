@@ -20,6 +20,11 @@ void main() {
   enableKeyboard();
 
   while (true) {
-    handleKeyboardInput();
+    loop();
   }
+}
+
+void loop() {
+  //getKeyboardInput();
+  handleKeyboardInput();
 }
