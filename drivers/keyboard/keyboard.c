@@ -12,13 +12,24 @@ static void handleKeyboardInput() {
   uint8_t scanCode = inb(KEYBOARD_DATA_PORT);
   if (scanCode == lastScanCode) return;
   lastScanCode = scanCode;
+  
+  // handle shift and caps lock
+  if (scanCode == 0x2a || scanCode == 0x36) {
+    keyboard_shift++;
+  } else if (scanCode == 0xaa || scanCode == 0xb6) {
+    keyboard_shift--;
+  } else if (scanCode == 0x3a) {
+    keyboard_capsLock = !keyboard_capsLock;
+  }
+
   // get char
   char str = kbdus[scanCode];
   if (keyboard_capsLock) str = kbdus_caps[scanCode];
   if (keyboard_shift > 0) str = kbdus_shift[scanCode];
  
 
-  if (keyboard_handleSpecialChar(scanCode) || str == 0) return;
+  // send to key buffer,
+  //if (keyboard_handleSpecialChar(scanCode) || str == 0) return;
   if (scanCode >= 0x80) return;
 
 

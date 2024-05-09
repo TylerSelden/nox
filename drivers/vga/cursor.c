@@ -118,7 +118,9 @@ static void vga_cursorUpf() {
 
 static void vga_cursorRightf() {
   char *vidmem = vga_cursorToVidmem();
-  if (*vidmem != 0x00) vga_cursorRight();
+  if (*vidmem != 0x00) return vga_cursorRight();
+  vga_cursorDownf();
+  vga_moveCursorX(0);
 }
 
 static void vga_cursorDownf() {

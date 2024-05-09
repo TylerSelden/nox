@@ -67,8 +67,8 @@ static void printf(char *str);
 static void vga_clearRow(uint8_t row);
 static void vga_clearScreen();
 
-static void printh(uint8_t hex);
-static void printhf(uint8_t hex);
+static void printh(uint64_t hex);
+static void printhf(uint64_t hex);
 
 static void vgaInit();
 

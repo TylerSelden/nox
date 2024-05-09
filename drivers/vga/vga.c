@@ -81,13 +81,26 @@ static void vga_clearScreen() {
   vga_moveCursorTo(0, 0);
 }
 
-static void printh(uint8_t hex) {
+static void printh(uint64_t hex) {
   char hexMap[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-  printc(hexMap[(hex & 0xF0) >> 4]);
-  printc(hexMap[(hex & 0x0F) >> 0]);
+//  printc(hexMap[(hex & 0xF0) >> 4]);
+//  printc(hexMap[(hex & 0x0F) >> 0]);
+  bool started = false;
+  uint8_t shift;
+
+  for (shift = 60; shift > 0; shift -= 4) {
+    char digit = hexMap[(hex >> shift) & 0xf];
+    if (!started && digit == '0' && shift > 4) {
+      continue;
+    }
+    started = true;
+    printc(digit);
+  }
+  // finally, last character
+  printc(hexMap[hex & 0xf]);
 }
 
-static void printhf(uint8_t hex) {
+static void printhf(uint64_t hex) {
   print("0x");
   printh(hex);
   newl();

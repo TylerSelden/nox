@@ -14,8 +14,8 @@ align 4
 
   ; video output params
   dd 1 ; Text mode
-  dd 30 ; Width, no preference
-  dd 30 ; Height, no preference
+  dd 80 ; Width
+  dd 25 ; Height
   dd 0 ; Depth, 0 in text mode
 
 
@@ -25,7 +25,8 @@ stack_bottom:
 resb 16384 ; 8 KiB
 stack_top:
 
-
+section .gdt
+%include "./boot/gdt.asm"
 
 
 section .text
@@ -33,12 +34,27 @@ global _start:function (_start.end - _start)
 _start:
   mov esp, stack_top
 
+
+  ; initialize GDT
+  lgdt [gdt]
+  
+  mov ax, DATA_SEG
+  mov ds, ax
+  mov es, ax
+  mov fs, ax
+  mov gs, ax
+  mov ss, ax
+
+  ; set CS
+  jmp CODE_SEG:.call_main
+
+
+.call_main:
   extern main
   call main
 
-
-
   cli
+
 .hang:
   hlt
   jmp .hang
