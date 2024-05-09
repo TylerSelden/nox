@@ -115,8 +115,6 @@ static void vga_clearScreen() {
 
 static void printh(uint64_t hex) {
   char hexMap[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-//  printc(hexMap[(hex & 0xF0) >> 4]);
-//  printc(hexMap[(hex & 0x0F) >> 0]);
   bool started = false;
   uint8_t shift;
 

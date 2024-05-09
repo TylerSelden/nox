@@ -34,6 +34,12 @@ static uint8_t vga_getCursorY() {
 
 
 
+static inline void vga_moveCursorRaw(char *pos) {
+  uint16_t offset = pos - VGA_VIDMEM_START;
+
+  vga_moveCursorTo(offset % VGA_WIDTH, offset / (VGA_WIDTH * 2));
+}
+
 static inline void vga_moveCursorTo(uint8_t x, uint8_t y) {
   uint16_t pos = y * VGA_WIDTH + x;
  
@@ -43,11 +49,11 @@ static inline void vga_moveCursorTo(uint8_t x, uint8_t y) {
 	outb(0x3d5, (uint8_t) ((pos >> 8) & 0xff));
 }
 
-static void vga_moveCursorX(uint8_t x) {
+static inline void vga_moveCursorX(uint8_t x) {
   vga_moveCursorTo(x, vga_getCursorY());
 }
 
-static void vga_moveCursorY(uint8_t y) {
+static inline void vga_moveCursorY(uint8_t y) {
   vga_moveCursorTo(vga_getCursorX(), y);
 }
 
@@ -99,13 +105,13 @@ static void vga_cursorDown() {
 
 static char *vga_cursorLeftf() {
   // move cursor left until non-null character, or end of vidmem
-  vga_cursorLeft();
   char *vidmem = vga_cursorToVidmem();
-  while (vga_getCursorX() > 0 && *(vidmem - 2) == 0x00) {
+  vga_cursorLeft();
+  while (vga_getCursorX() > 0 && *(vidmem - 4) == 0x00) {
     vga_cursorLeft();
     vidmem -= 2;
   }
-  return vidmem;
+  return vga_cursorToVidmem();
 }
 
 static char *vga_cursorUpf() {
