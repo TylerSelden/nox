@@ -10,12 +10,13 @@ char kbdus_caps[84];
 uint8_t keyboard_shift;
 bool keyboard_capsLock;
 
-void (*keyHandlers[256])();
+//void (*keyHandlers[256])();
 static bool keyboard_handleSpecialChar(uint8_t scanCode);
 
 
 
 uint8_t lastScanCode;
+uint8_t scanCodeBuf;
 char keyBuf;
 static void enableKeyboard();
 static void handleKeyboardInput();

@@ -15,11 +15,11 @@ static void handleKeyboardInput() {
   
   // handle shift and caps lock
   if (scanCode == 0x2a || scanCode == 0x36) {
-    keyboard_shift++;
+    return keyboard_shift++;
   } else if (scanCode == 0xaa || scanCode == 0xb6) {
-    keyboard_shift--;
+    return keyboard_shift--;
   } else if (scanCode == 0x3a) {
-    keyboard_capsLock = !keyboard_capsLock;
+    return keyboard_capsLock = !keyboard_capsLock;
   }
 
   // get char
@@ -32,6 +32,6 @@ static void handleKeyboardInput() {
   //if (keyboard_handleSpecialChar(scanCode) || str == 0) return;
   if (scanCode >= 0x80) return;
 
-
+  scanCodeBuf = scanCode;
   keyBuf = str;
 }

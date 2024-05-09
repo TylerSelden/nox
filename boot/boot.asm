@@ -49,6 +49,7 @@ _start:
   jmp CODE_SEG:.call_main
 
 
+
 .call_main:
   extern main
   call main

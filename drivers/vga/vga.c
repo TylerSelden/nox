@@ -51,6 +51,24 @@ static void printc(char str) {
   *vidmem   = color;
 }
 
+static void insertc(char str) {
+  if (vga_specialChar(str)) return;
+  char *vidmem = vga_cursorToVidmem();
+  if (vga_addCursorX(1) >= VGA_WIDTH) overflow();
+  // shift everything to the RIGHT
+  // get last position and work backwards :/
+  char *cpy = vga_cursorToVidmem();
+  while (*cpy != 0) cpy += 2;
+  while (cpy > vidmem) {
+    *cpy = *(cpy - 2);
+    *(cpy + 1) = *(cpy - 1);
+    cpy -= 2;
+  }
+  vidmem = vga_cursorToVidmem() - 2;
+  *vidmem++ = str;
+  *vidmem   = color;
+}
+
 
 static void print(char *str) {
   while (*str) {
@@ -127,9 +145,13 @@ static bool vga_specialChar(char str) {
     // backspace
     vga_cursorLeftf();
     char *vidmem = vga_cursorToVidmem();
-    *vidmem++ = 0x00;
-    *vidmem   = 0x0f;
-
+    
+    // shift everything over
+    while (*vidmem != 0) {
+      *vidmem = *(vidmem + 2);
+      *(vidmem + 1) = *(vidmem + 3);
+      vidmem += 2;
+    }
   } else {
     return false;
   }

@@ -62,6 +62,7 @@ static void overflow();
 
 static void print(char *str);
 static void printc(char str);
+static void insertc(char str);
 static void printf(char *str);
 
 static void vga_clearRow(uint8_t row);

@@ -5,7 +5,7 @@ setup:
 
 build: FORCE
 	@nasm -felf32 ./boot/boot.asm -o ./build/boot.o
-	@i686-elf-gcc -c ./kernel/kernel.c -o ./build/kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -Wno-unused-function
+	@i686-elf-gcc -c ./kernel/kernel.c -o ./build/kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -Wno-unused-function -Wno-return-type
 	@i686-elf-gcc -T ./utils/linker.ld -o ./output/os.bin -ffreestanding -O2 -nostdlib ./build/boot.o ./build/kernel.o -lgcc
 	# Create GRUB ISO
 	@cp ./output/os.bin ./utils/grub/boot/os.bin
