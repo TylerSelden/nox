@@ -97,7 +97,7 @@ static void vga_cursorDown() {
 
 // formatted / pretty versions
 
-static void vga_cursorLeftf() {
+static char *vga_cursorLeftf() {
   // move cursor left until non-null character, or end of vidmem
   vga_cursorLeft();
   char *vidmem = vga_cursorToVidmem();
@@ -105,31 +105,38 @@ static void vga_cursorLeftf() {
     vga_cursorLeft();
     vidmem -= 2;
   }
+  return vidmem;
 }
 
-static void vga_cursorUpf() {
+static char *vga_cursorUpf() {
   vga_cursorUp();
   char *vidmem = vga_cursorToVidmem();
   while (vga_getCursorX() > 0 && *(vidmem - 2) == 0x00) {
     vga_cursorLeft();
     vidmem -= 2;
   }
+  return vidmem;
 }
 
-static void vga_cursorRightf() {
+static char *vga_cursorRightf() {
   char *vidmem = vga_cursorToVidmem();
-  if (*vidmem != 0x00) return vga_cursorRight();
-  vga_cursorDownf();
-  vga_moveCursorX(0);
+  if (*vidmem != 0x00) {
+    vga_cursorRight();
+  } else {
+    vga_cursorDownf();
+    vga_moveCursorX(0);
+  }
+  return vga_cursorToVidmem();
 }
 
-static void vga_cursorDownf() {
+static char *vga_cursorDownf() {
   vga_cursorDown();
   char *vidmem = vga_cursorToVidmem();
   while (vga_getCursorX() > 0 && *(vidmem - 2) == 0x00) {
     vga_cursorLeft();
     vidmem -= 2;
   }
+  return vidmem;
 }
 
 

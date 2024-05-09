@@ -2,6 +2,7 @@
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
 #define VGA_MAX_VIDMEM_LEN VGA_WIDTH * VGA_HEIGHT * 2
+#define VGA_VIDMEM_END VGA_VIDMEM_START + VGA_MAX_VIDMEM_LEN
 
 enum vga_color {
 	vga_color_black = 0,
@@ -45,10 +46,10 @@ static void vga_cursorUp();
 static void vga_cursorRight();
 static void vga_cursorDown();
 
-static void vga_cursorLeftf();
-static void vga_cursorUpf();
-static void vga_cursorRightf();
-static void vga_cursorDownf();
+static char *vga_cursorLeftf();
+static char *vga_cursorUpf();
+static char *vga_cursorRightf();
+static char *vga_cursorDownf();
 
 
 static char *vga_xyToVidmem(uint8_t x, uint8_t y);
@@ -57,6 +58,8 @@ static char *vga_cursorToVidmem();
 static void changeColor(enum vga_color fg, enum vga_color bg);
 
 static void newl();
+static void inewl();
+
 static void scroll();
 static void overflow();
 
@@ -72,5 +75,8 @@ static void printh(uint64_t hex);
 static void printhf(uint64_t hex);
 
 static void vgaInit();
+
+static char *vga_bufEndAfter(char *ptr);
+static char *vga_bufEndBefore(char *ptr);
 
 static bool vga_specialChar(char str);

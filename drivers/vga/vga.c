@@ -24,6 +24,20 @@ static void newl() {
   if (vga_addCursorY(1) >= VGA_HEIGHT) scroll();
 }
 
+static void inewl() {
+  char *vidmem = vga_cursorToVidmem();
+  uint8_t delta = vga_cursorDownf() - vidmem;
+
+  // move all chars forward, overwrite with null chars
+  while (vidmem < vga_bufEndAfter(vidmem)) {
+    *(vidmem + delta) = *vidmem;
+    *(vidmem + delta + 1) = *(vidmem + 1);
+    *vidmem = 0;
+    *(vidmem + 1) = color;
+    vidmem += 2;
+  }
+}
+
 static void scroll() {
   // clear out first row
   vga_clearRow(0);
@@ -132,10 +146,19 @@ static void vgaInit() {
   vga_clearScreen();
 }
 
+static char *vga_bufEndAfter(char *ptr) {
+  while (*ptr != 0) ptr += 2;
+  return ptr;
+}
+
+static char *vga_bufEndBefore(char *ptr) {
+  while (*ptr != 0) ptr -= 2;
+  return ptr;
+}
 
 static bool vga_specialChar(char str) {
   if (str == '\n') {
-    newl();
+    inewl();
   } else if (str == '\t') {
     printc(' ');
     printc(' ');
@@ -143,15 +166,22 @@ static bool vga_specialChar(char str) {
     vga_moveCursorX(0);
   } else if (str == '\b') {
     // backspace
-    vga_cursorLeftf();
     char *vidmem = vga_cursorToVidmem();
+    uint8_t delta = vidmem - vga_cursorLeftf();
     
+    // delete char
+    *(vidmem - delta) = 0;
+    *(vidmem - delta + 1) = color;
+
     // shift everything over
-    while (*vidmem != 0) {
-      *vidmem = *(vidmem + 2);
-      *(vidmem + 1) = *(vidmem + 3);
+    while (vidmem < vga_bufEndAfter(vidmem)) {
+      *(vidmem - delta) = *vidmem;
+      *(vidmem - delta + 1) = *(vidmem + 1);
+      *vidmem = 0;
+      *(vidmem + 1) = color;
       vidmem += 2;
     }
+    // write over extra chars
   } else {
     return false;
   }
