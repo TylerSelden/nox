@@ -1,4 +1,4 @@
-static void vga_enableCursor(uint8_t cursor_start, uint8_t cursor_end) {
+static inline void vga_enableCursor(uint8_t cursor_start, uint8_t cursor_end) {
   outb(0x3d4, 0x0a);
 	outb(0x3d5, (inb(0x3d5) & 0xc0) | cursor_start);
  
@@ -6,14 +6,14 @@ static void vga_enableCursor(uint8_t cursor_start, uint8_t cursor_end) {
 	outb(0x3d5, (inb(0x3d5) & 0xc0) | cursor_end);
 }
 
-static void vga_disableCursor() {
+static inline void vga_disableCursor() {
   outb(0x3d4, 0x0a);
 	outb(0x3d5, 0x20);
 }
 
 
 
-static uint16_t vga_getCursorPos() {
+static inline uint16_t vga_getCursorPos() {
   uint16_t pos = 0;
   outb(0x3d4, 0x0f);
   pos |= inb(0x3d5);
@@ -34,7 +34,7 @@ static uint8_t vga_getCursorY() {
 
 
 
-static void vga_moveCursorTo(uint8_t x, uint8_t y) {
+static inline void vga_moveCursorTo(uint8_t x, uint8_t y) {
   uint16_t pos = y * VGA_WIDTH + x;
  
 	outb(0x3d4, 0x0f);
