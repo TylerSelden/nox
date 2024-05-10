@@ -35,7 +35,7 @@ static uint8_t vga_getCursorY() {
 
 
 static inline void vga_moveCursorRaw(char *pos) {
-  uint16_t offset = pos - VGA_VIDMEM_START;
+  uint16_t offset = pos - (char*) VGA_VIDMEM_START;
 
   vga_moveCursorTo(offset % VGA_WIDTH, offset / (VGA_WIDTH * 2));
 }

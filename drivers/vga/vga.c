@@ -145,12 +145,12 @@ static void vgaInit() {
 }
 
 static char *vga_bufEndAfter(char *ptr) {
-  while (*ptr != 0) ptr += 2;
+  while (*ptr != 0 && ptr <= VGA_VIDMEM_END) ptr += 2;
   return ptr;
 }
 
 static char *vga_bufEndBefore(char *ptr) {
-  while (*ptr != 0) ptr -= 2;
+  while (*ptr != 0 && ptr >= VGA_VIDMEM_START) ptr -= 2;
   return ptr;
 }
 
