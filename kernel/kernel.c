@@ -2,13 +2,22 @@
 #include <stddef.h>
 #include <stdint.h>
 
+// Header files
+#include "../drivers/vga/vga.h"
+#include "../drivers/io/io.h"
+
+// C files
+#include "../drivers/io/io.c"
+#include "../drivers/vga/vga.c"
+
+
 void main(void) {
+  enable_cursor(14, 15);
+
   // output X to vidmem
-  uint16_t *vidmem = 0xb8000;
-  uint8_t color = 0x0f;
-  vidmem[0] = 'N' | (color << 8);
-  vidmem[1] = 'o' | (color << 8);
-  vidmem[2] = 'x' | (color << 8);
-  
+  putc('N', 0, 0);
+  putc('O', 1, 1);
+  putc('X', 2, 2);
+
   return;
 }
