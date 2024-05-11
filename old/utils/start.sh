@@ -8,15 +8,15 @@ set -m
 websockify_pid=$!
 
 # Start the second process in the background
-qemu-system-i386 -drive format=raw,if=floppy,file=./build/os.bin -vnc :0 &
-#qemu-system-i386 -fda ./build/os.bin -vnc :0 &
+#qemu-system-i386 -cdrom ./output/os.iso -vnc :0
+qemu-system-i386 -kernel ./output/os.bin -vnc :0
 qemu_pid=$!
 
 # Function to clean up when script receives SIGINT
 clean_up() {
-    # Send SIGTERM to all jobs in the current process group
-    kill -TERM $websockify_pid $qemu_pid
-    wait $websockify_pid $qemu_pid 2> /dev/null
+	# Send SIGTERM to all jobs in the current process group
+	kill -TERM $websockify_pid $qemu_pid
+	wait $websockify_pid $qemu_pid 2>/dev/null
 }
 
 # Trap SIGINT to call the clean_up function
@@ -24,4 +24,3 @@ trap clean_up SIGINT
 
 # Wait for the processes to finish
 wait
-
