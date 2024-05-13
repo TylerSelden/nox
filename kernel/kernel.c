@@ -3,12 +3,9 @@
 #include <stdint.h>
 
 // Header files
-#include "../drivers/vga/vga.h"
-#include "../drivers/io/io.h"
+#include <drivers/io.h>
+#include <drivers/vga.h>
 
-// C files
-#include "../drivers/io/io.c"
-#include "../drivers/vga/vga.c"
 
 
 void main(void) {
@@ -20,6 +17,8 @@ void main(void) {
   putc('X', 2, 2);
 
   set_cursor(2, 2);
+
+  outb(0x80, color);
 
   return;
 }

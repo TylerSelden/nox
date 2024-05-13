@@ -1,17 +1,33 @@
-all: setup build run
+NASMPARAMS = -felf32
+GCCPARAMS  = -nostdlib -MMD -Iinclude -std=gnu99 -ffreestanding -O2 -Wall -Wextra -Wno-unused-function -Wno-return-type
+LDPARAMS   = -ffreestanding -O2 -nostdlib -lgcc
+CPATHS     = ./drivers** ./include** ./kernel**
 
-setup:
-	@rm -rf ./build/*
+SRCS      := $(shell find $(CPATHS) -name "*.c")
 
-build: FORCE
-	@nasm -felf32 ./boot/boot.asm -o ./build/boot.o
-	@i686-elf-gcc -c ./kernel/kernel.c -o ./build/kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -Wno-unused-function -Wno-return-type
-	@i686-elf-gcc -T ./utils/linker.ld -o ./output/os.bin -ffreestanding -O2 -nostdlib ./build/boot.o ./build/kernel.o -lgcc
-	# Create GRUB ISO
+all: build run
+
+
+
+boot:
+	@nasm $(NASMPARAMS) ./boot/boot.asm -o ./build/boot.o
+
+gcc:	
+	@$(foreach SRC,$(SRCS),i686-elf-gcc $(GCCPARAMS) -c $(SRC) -o ./build/$(notdir $(SRC:.c=.o));)
+
+ld:
+	@i686-elf-gcc $(LDPARAMS) -T ./utils/linker.ld -o ./output/os.bin ./build/*.o
+
+grub:
 	@cp ./output/os.bin ./utils/grub/boot/os.bin
 	@grub-mkrescue -o ./output/os.iso ./utils/grub
+
+
+
+
+build: boot gcc ld grub
+
 run:
 	@./utils/start.sh
-#	@qemu-system-i386 -drive format=raw,file=./build/boot.bin -vnc :0
 
-FORCE:
+.PHONY: all boot gcc ld grub build run

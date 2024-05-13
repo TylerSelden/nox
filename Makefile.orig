@@ -1,0 +1,30 @@
+NASMPARAMS = -felf32
+GCCPARAMS  = -nostdlib -MMD -Iinclude -std=gnu99 -ffreestanding -O2 -Wall -Wextra -Wno-unused-function -Wno-return-type
+LDPARAMS   = -ffreestanding -O2 -nostdlib -lgcc
+CPATHS     = ./drivers** ./include** ./kernel**
+
+all: build run
+
+
+
+boot: FORCE
+	@nasm $(NASMPARAMS) ./boot/boot.asm -o ./build/boot.o
+
+gcc: FORCE	
+	@find $(CPATHS) -name "*.c" -exec sh -c 'i686-elf-gcc $(GCCPARAMS) -c {} -o ./build/$$(basename {}).o' \;
+
+ld: FORCE
+	@i686-elf-gcc $(LDPARAMS) -T ./utils/linker.ld -o ./output/os.bin ./build/*.o
+
+grub: FORCE
+	@cp ./output/os.bin ./utils/grub/boot/os.bin
+	@grub-mkrescue -o ./output/os.iso ./utils/grub
+
+
+
+build: boot gcc ld grub FORCE
+
+run:
+	@./utils/start.sh
+
+FORCE:
