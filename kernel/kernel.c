@@ -15,9 +15,11 @@ void main(void) {
   enable_cursor(14, 15);
 
   // output X to vidmem
-  putc('N', 0, 0);
-  putc('O', 1, 1);
+  putrc('N', VIDMEM_START);
+  putrc('O', VIDMEM_START + (2 * VIDMEM_WIDTH) + 2);
   putc('X', 2, 2);
+
+  set_cursor(2, 2);
 
   return;
 }
