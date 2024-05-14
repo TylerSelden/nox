@@ -38,8 +38,15 @@ void keyboard_init() {
 
 void keyboard_input() { 
   uint8_t scancode = inb(KEYBOARD_DATA_PORT);
-  if (scancode == kbd_buf[0]) return;
 
+  vga_puts("Scancode: 0x", 0, 23);
+  vga_puti(scancode, 16, 12, 23);
+  vga_puts("Shift: ", 0, 24);
+  vga_puti(keyboard_shift, 10, 7, 24);
+
+ 
+
+  if (scancode == kbd_buf[0]) return;
   kbd_buf[0] = scancode;
 
   // shift and caps lock
@@ -51,12 +58,7 @@ void keyboard_input() {
     keyboard_caps = !keyboard_caps;
   }
 
-  vga_puts("Scancode: 0x", 0, 23);
-  vga_puti(scancode, 16, 12, 23);
-  vga_puts("Shift: ", 0, 24);
-  vga_puti(keyboard_shift, 10, 7, 24);
-
-  if (scancode >= 0x80) return; //released key
+ if (scancode >= 0x80) return; //released key
 
   // get char
   char str = kbd[scancode];
@@ -67,6 +69,10 @@ void keyboard_input() {
   }
 
   if (str == 0) return; // special character
+  
+  if (str == 'A') {
+    vga_puti(1 / 0, 10, 11, 11);
+  }
 
   vga_printc(str);
   kbd_buf[1] = str;  

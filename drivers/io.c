@@ -17,3 +17,7 @@ void outb(uint16_t port, uint8_t val) {
                     "Nd"(port)
                   : "memory" );
 }
+
+void io_wait() {
+  outb(0x80, 0);
+}

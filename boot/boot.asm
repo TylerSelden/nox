@@ -28,6 +28,8 @@ section .gdt
 %include "./boot/gdt.asm"
 
 
+%include "./boot/idt.asm"
+
 section .text
 global _start:function (_start.end - _start)
 _start:
@@ -50,10 +52,12 @@ _start:
 
 .call_main:
   extern main
+
+  sti
   call main
 
   ; halt
-  cli
+  ;cli
 .hang:
   hlt
   jmp .hang
