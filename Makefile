@@ -1,13 +1,16 @@
 NASMPARAMS = -felf32
 GCCPARAMS  = -nostdlib -MMD -Iinclude -std=gnu99 -ffreestanding -O2 -Wall -Wextra -Wno-unused-function -Wno-return-type
 LDPARAMS   = -ffreestanding -O2 -nostdlib -lgcc
-CPATHS     = ./drivers** ./include** ./kernel**
+CPATHS     = ./drivers** ./include** ./kernel** ./lib**
 
 SRCS      := $(shell find $(CPATHS) -name "*.c")
 
 all: build run
 
 
+
+clean:
+	@rm -rf ./build/*
 
 boot:
 	@nasm $(NASMPARAMS) ./boot/boot.asm -o ./build/boot.o
@@ -25,7 +28,7 @@ grub:
 
 
 
-build: boot gcc ld grub
+build: clean boot gcc ld grub
 
 run:
 	@./utils/start.sh

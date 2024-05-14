@@ -139,7 +139,8 @@ void vga_puti(uint32_t num, uint8_t base, uint8_t x, uint8_t y) {
   buffer[i] = 0;
 
   if (num == 0) {
-    buffer[i - 1] = map[0];
+    i--;
+    buffer[i] = map[0];
   } else {
     while (num && i) {
       buffer[--i] = map[num % base];
@@ -156,7 +157,8 @@ void vga_putir(uint32_t num, uint8_t base, uint16_t *addr) {
   buffer[i] = 0;
 
   if (num == 0) {
-    buffer[i - 1] = map[0];
+    i--;
+    buffer[i] = map[0];
   } else {
     while (num && i) {
       buffer[--i] = map[num % base];
