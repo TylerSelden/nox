@@ -9,16 +9,15 @@
 
 
 void main(void) {
-  enable_cursor(14, 15);
+  vga_enable_cursor(14, 15);
+  vga_clear();
+  vga_set_cursor(0, 0);
 
   // output X to vidmem
-  putrc('N', VIDMEM_START);
-  putrc('O', VIDMEM_START + (2 * VIDMEM_WIDTH) + 2);
-  putc('X', 2, 2);
+  vga_prints("Welcome to Nox!");
 
-  set_cursor(2, 2);
 
-  outb(0x80, color);
+//  vga_prints("Testing! This is a superlong string asldkfjsldkfjldksjflkjsdlskdfjsldkfjlkjlkjl1");
 
   return;
 }
