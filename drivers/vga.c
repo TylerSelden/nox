@@ -184,3 +184,9 @@ void vga_printi(uint32_t num, uint8_t base) {
 
   vga_prints(&buffer[i]);
 }
+
+void vga_init() {
+  vga_enable_cursor(14, 15);
+  vga_clear();
+  vga_set_cursor(0, 0);
+}

@@ -26,12 +26,10 @@ uint8_t vga_get_cursor_y();
 void vga_add_cursor_x(int8_t x);
 void vga_add_cursor_y(int8_t y);
 
-
 void vga_write_row(uint8_t row, char str);
 void vga_clear();
 void vga_scroll();
 void vga_newl();
-
 
 void vga_putc(char str, uint8_t x, uint8_t y);
 void vga_putcr(char str, uint16_t *addr);
@@ -44,6 +42,8 @@ void vga_prints(char *str);
 void vga_puti(uint32_t num, uint8_t base, uint8_t x, uint8_t y);
 void vga_putir(uint32_t num, uint8_t base, uint16_t *addr);
 void vga_printi(uint32_t num, uint8_t base);
+
+void vga_init();
 
 
 #endif
