@@ -28,7 +28,7 @@ void idt_init();
 void exception_handler(uint8_t test);
 
 
-void irq_test(uint8_t irq);
+void irq_handler(uint8_t irq);
 
 
 #endif

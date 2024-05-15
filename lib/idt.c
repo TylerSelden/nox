@@ -20,7 +20,7 @@ void idt_init() {
   idtr.base = (uint32_t) (uint8_t*) &idt[0];
   idtr.limit = (uint16_t) 64 * IDT_SIZE - 1;
 
-  for (uint8_t i = 0; i < 32; i++) {
+  for (uint8_t i = 0; i < 48; i++) {
     idt_set_entry(i, isr_stub_table[i]);
   }
 
@@ -38,11 +38,9 @@ void exception_handler(uint8_t test) {
   __asm__ volatile ("hlt");
 }
 
-void irq_test(uint8_t irq) {
-  color = 0x5f;
-  vga_set_cursor(0, 1);
-  vga_prints("IRQ: ");
-  vga_printi(irq, 10);
 
+void irq_handler(uint8_t irq) {
   pic_end_int(irq);
+
+  if (irq == 33) keyboard_input();
 }

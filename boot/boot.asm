@@ -56,7 +56,7 @@ _start:
   call main
 
   ; halt
-  cli
+;  cli
 .hang:
   hlt
   jmp .hang

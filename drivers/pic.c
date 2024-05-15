@@ -3,8 +3,7 @@
 #include <drivers/io.h>
 
 void pic_end_int(uint8_t irq) {
-  if (irq < 8) return;
-  outb(PIC2_CMD, 0x20);
+  if (irq >= 8) outb(PIC2_CMD, 0x20);
   outb(PIC1_CMD, 0x20);
 }
 

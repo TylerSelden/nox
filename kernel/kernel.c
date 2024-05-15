@@ -19,11 +19,15 @@ void main(void) {
 
   vga_prints("Welcome to Nox!");
 
-  
+// no longer needed :)
+/*  
   while (true) {
-//    keyboard_input();
+    // dev keybinds
+    if (kbd_buf[1] == 'A') vga_puti(1 / 0, 10, 11, 11);
+    if (kbd_buf[1] == 'B') vga_write_row(24, ' ');
+    kbd_buf[1] = 0;
   }
-
+*/
 
   return;
 }
