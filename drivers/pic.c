@@ -24,7 +24,7 @@ void pic_init() {
   // tell master it has a slave
   outb(PIC1_DATA, 4);
   io_wait();
-  outb(PIC1_DATA, 2);
+  outb(PIC2_DATA, 2);
   io_wait();
 
   // enable 8086 mode
