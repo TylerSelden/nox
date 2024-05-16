@@ -32,14 +32,14 @@ void idt_init() {
 }
 
 
-void exception_handler(uint8_t num, uint8_t err) {
-  panic(num, err);
+void exception_handler(idt_registers_t *state) {
+  panic(state->int_no, state->err_code);
 }
 
 
 
-void irq_handler(uint8_t irq) {
-  if (irq == 33) keyboard_input();
+void irq_handler(idt_registers_t *state) {
+  if (state->int_no == 33) keyboard_input();
 
-  pic_end_int(irq);
+  pic_end_int(state->int_no);
 }

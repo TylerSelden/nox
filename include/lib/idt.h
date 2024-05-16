@@ -7,6 +7,16 @@
 #define IDT_SIZE 256
 
 typedef struct {
+  uint32_t ds, es, fs, gs;
+  uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;
+  uint32_t int_no, err_code;
+  uint32_t eip, cs, eflags, useresp, ss;
+} idt_registers_t;
+
+typedef void (*isr_t) (idt_registers_t*);
+
+
+typedef struct {
   uint16_t offset_low;  // lower 16 bits of handler func addr
   uint16_t selector;    // kernel segment selector
   uint8_t  reserved;    // this musts be zero
@@ -25,10 +35,10 @@ extern idtr_t idtr;
 void set_idt_entry(uint8_t index, uint32_t handler_addr);
 void idt_init();
 
-void exception_handler(uint8_t num, uint8_t err);
+void exception_handler(idt_registers_t *state);
 
 
-void irq_handler(uint8_t irq);
+void irq_handler(idt_registers_t *state);
 
 
 #endif

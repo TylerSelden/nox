@@ -1,33 +1,109 @@
 %macro isr_err_stub 1
 isr_stub_%+%1:
-  pusha
   push %1
+  pusha
+  
+  push gs
+  push fs
+  push es
+  push ds
+
+  mov eax, 0x10
+  mov ds, eax
+  mov es, eax
+  mov fs, eax
+  mov gs, eax
+
   cld
+  mov ebx, esp
+  add esp, -16
+  sub esp, 12
+
+  push ebx
   call exception_handler
-  add esp, 8
+  
+  mov esp, ebx
+  pop ds
+  pop es
+  pop fs
+  pop gs
+
   popa
+  add esp, 8
   iret
 %endmacro
 
 %macro isr_no_err_stub 1
 isr_stub_%+%1:
-  pusha
   push 0
   push %1
+  pusha
+  
+  push gs
+  push fs
+  push es
+  push ds
+
+  mov eax, 0x10
+  mov ds, eax
+  mov es, eax
+  mov fs, eax
+  mov gs, eax
+
   cld
+  mov ebx, esp
+  add esp, -16
+  sub esp, 12
+
+  push ebx
   call exception_handler
-  add esp, 8
+  
+  mov esp, ebx
+  pop ds
+  pop es
+  pop fs
+  pop gs
+  
   popa
+  add esp, 8
   iret
 %endmacro
 
 %macro irq_stub 1
 isr_stub_%+%1:
+  push 0
   push %1
+  pusha
+  
+  push gs
+  push fs
+  push es
+  push ds
+
+  mov eax, 0x10
+  mov ds, eax
+  mov es, eax
+  mov fs, eax
+  mov gs, eax
+
   cld
+  mov ebx, esp
+  add esp, -16
+  sub esp, 12
+
+  push ebx
   call irq_handler
-  add esp, 4
-  iret
+  
+  mov esp, ebx
+  pop ds
+  pop es
+  pop fs
+  pop gs
+  
+  popa
+  add esp, 8
+  iret 
+
 %endmacro
 
 extern exception_handler

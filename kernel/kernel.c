@@ -18,7 +18,7 @@ void main(void) {
   vga_init();
   keyboard_init();
 
-  vga_prints("Welcome to Nox!");
+  vga_prints("Welcome to Nox! Type some stuff: ");
 
   return;
 }
