@@ -53,10 +53,9 @@ _start:
 .call_main:
   extern main
 
-;  call main
+  call main
 
   ; halt
-  cli
 .hang:
   hlt
   jmp .hang
