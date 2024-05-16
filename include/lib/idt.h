@@ -25,7 +25,7 @@ extern idtr_t idtr;
 void set_idt_entry(uint8_t index, uint32_t handler_addr);
 void idt_init();
 
-void exception_handler(uint8_t test);
+void exception_handler(uint8_t num, uint8_t err);
 
 
 void irq_handler(uint8_t irq);

@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 // Header files
+#include <lib/panic.h>
 #include <lib/idt.h>
 #include <drivers/io.h>
 #include <drivers/pic.h>
@@ -18,16 +19,6 @@ void main(void) {
   keyboard_init();
 
   vga_prints("Welcome to Nox!");
-
-// no longer needed :)
-/*  
-  while (true) {
-    // dev keybinds
-    if (kbd_buf[1] == 'A') vga_puti(1 / 0, 10, 11, 11);
-    if (kbd_buf[1] == 'B') vga_write_row(24, ' ');
-    kbd_buf[1] = 0;
-  }
-*/
 
   return;
 }

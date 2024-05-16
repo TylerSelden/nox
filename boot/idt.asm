@@ -1,22 +1,30 @@
 %macro isr_err_stub 1
 isr_stub_%+%1:
+  pusha
   push %1
+  cld
   call exception_handler
-  add esp, 4
+  add esp, 8
+  popa
   iret
 %endmacro
 
 %macro isr_no_err_stub 1
 isr_stub_%+%1:
+  pusha
+  push 0
   push %1
+  cld
   call exception_handler
-  add esp, 4 ; clean up from extra argument
+  add esp, 8
+  popa
   iret
 %endmacro
 
 %macro irq_stub 1
 isr_stub_%+%1:
   push %1
+  cld
   call irq_handler
   add esp, 4
   iret

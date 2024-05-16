@@ -27,7 +27,7 @@ stack_top:
 section .gdt
 %include "./boot/gdt.asm"
 
-
+section .idt
 %include "./boot/idt.asm"
 
 section .text
@@ -53,10 +53,10 @@ _start:
 .call_main:
   extern main
 
-  call main
+;  call main
 
   ; halt
-;  cli
+  cli
 .hang:
   hlt
   jmp .hang

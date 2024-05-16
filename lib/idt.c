@@ -1,7 +1,10 @@
 #include <stdbool.h>
 #include <stdint.h>
+#include <lib/panic.h>
 #include <lib/idt.h>
+#include <drivers/pic.h>
 #include <drivers/vga.h>
+#include <drivers/keyboard.h>
 
 __attribute__((aligned(0x10))) idt_entry_t idt[IDT_SIZE];
 idtr_t idtr;
@@ -29,18 +32,14 @@ void idt_init() {
 }
 
 
-void exception_handler(uint8_t test) {
-  color = 0x4f;
-  vga_set_cursor(0, 0);
-  vga_prints("Exception occurred, halting! Exception number: "); 
-  vga_printi(test, 10);
-
-  __asm__ volatile ("hlt");
+void exception_handler(uint8_t num, uint8_t err) {
+  panic(num, err);
 }
 
 
-void irq_handler(uint8_t irq) {
-  pic_end_int(irq);
 
+void irq_handler(uint8_t irq) {
   if (irq == 33) keyboard_input();
+
+  pic_end_int(irq);
 }

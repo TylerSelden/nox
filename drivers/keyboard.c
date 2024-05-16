@@ -36,6 +36,12 @@ void keyboard_init() {
   outb(KEYBOARD_CMD_PORT, 0xae);
 }
 
+void dev_keybinds(char str) {
+  if (str == '~') {
+    __asm__ volatile ("movl $0, %eax; divl %eax");
+  }
+}
+
 void keyboard_input() { 
   uint8_t scancode = inb(KEYBOARD_DATA_PORT);
   kbd_buf[0] = scancode;
@@ -72,7 +78,9 @@ void keyboard_input() {
   }
 
   if (str == 0) return; // special character
-  
+
+  // dev keybinds
+  dev_keybinds(str);
 
   vga_printc(str);
   kbd_buf[1] = str;  
