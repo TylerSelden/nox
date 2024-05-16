@@ -42,11 +42,11 @@ uint16_t vga_get_cursor() {
   pos |= ((uint16_t)inb(0x3d5)) << 8;
   return pos;
 }
-uint16_t *vga_get_cursor_addr() {
-  uint16_t *vidmem = (uint16_t*) VIDMEM_START;
-  vidmem += vga_get_cursor_x();
-  vidmem += vga_get_cursor_y() * VIDMEM_WIDTH;
-  return vidmem;
+uint16_t vga_get_cursor_addr() {
+  uint16_t addr = 0;
+  addr += vga_get_cursor_x();
+  addr += vga_get_cursor_y() * VIDMEM_WIDTH;
+  return addr;
 }
 uint8_t vga_get_cursor_x() {
   return vga_get_cursor() % VIDMEM_WIDTH;
@@ -97,13 +97,37 @@ static void vga_handle_overflow() {
 }
 
 
-void vga_putc(char str, uint8_t x, uint8_t y) {
-  vidmem[(y * VIDMEM_WIDTH) + x] = str | (color << 8);
+static bool vga_special_char(char str, uint16_t addr, bool print) {
+  if (str == '\n') {
+    if (print) {
+      vga_newl();
+    }
+  } else if (str == '\t') {
+    vga_puti(addr, 16, 10, 10);
+    vidmem[addr] = ' ' | (color << 8);
+    vidmem[addr + 1] = ' ' | (color << 8);
+    if (print) {
+      vga_add_cursor_x(2);
+    }
+  } else {
+    return false;
+  }
+  return true;
 }
-void vga_putcr(char str, uint16_t *addr) {
-  *addr = str | (color << 8);
+
+
+
+void vga_putc(char str, uint8_t x, uint8_t y) {
+  uint16_t addr = (y * VIDMEM_WIDTH) + x;
+  if (vga_special_char(str, addr, false)) return;
+  vidmem[addr] = str | (color << 8);
+}
+void vga_putcr(char str, uint16_t addr) {
+  if (vga_special_char(str, addr, false)) return;
+  vidmem[addr] = str | (color << 8);
 }
 void vga_printc(char str) {
+  if (vga_special_char(str, vga_get_cursor_addr(), true)) return;
   vga_putcr(str, vga_get_cursor_addr());
   vga_add_cursor_x(1);
   vga_handle_overflow();
@@ -116,7 +140,7 @@ void vga_puts(char *str, uint8_t x, uint8_t y) {
     x++; // this is fine if it exceeds VIDMEM_WIDTH, as the math still works in putc()
   }
 }
-void vga_putsr(char *str, uint16_t *addr) {
+void vga_putsr(char *str, uint16_t addr) {
   while (*str != 0) {
     vga_putcr(*str, addr);
     str++;
@@ -149,7 +173,7 @@ void vga_puti(uint32_t num, uint8_t base, uint8_t x, uint8_t y) {
   }
   vga_puts(&buffer[i], x, y);
 }
-void vga_putir(uint32_t num, uint8_t base, uint16_t *addr) {
+void vga_putir(uint32_t num, uint8_t base, uint16_t addr) {
   if (base > 16) return;
   char *map = "0123456789abcdef";
   char buffer[33];

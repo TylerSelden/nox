@@ -1,5 +1,5 @@
 NASMPARAMS = -felf32
-GCCPARAMS  = -nostdlib -MMD -Iinclude -std=gnu99 -ffreestanding -O2 -Wall -Wextra -Wno-unused-function -Wno-return-type -g
+GCCPARAMS  = -nostdlib -MMD -Iinclude -std=gnu99 -ffreestanding -O2 -Wall -Wextra -Wno-unused-function -g
 LDPARAMS   = -ffreestanding -O2 -nostdlib -lgcc
 CPATHS     = ./drivers** ./include** ./kernel** ./lib**
 

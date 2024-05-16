@@ -16,7 +16,7 @@ isr_stub_%+%1:
 
   cld
   mov ebx, esp
-  add esp, -16
+  and esp, -16
   sub esp, 12
 
   push ebx
@@ -52,7 +52,7 @@ isr_stub_%+%1:
 
   cld
   mov ebx, esp
-  add esp, -16
+  and esp, -16
   sub esp, 12
 
   push ebx
@@ -88,7 +88,7 @@ isr_stub_%+%1:
 
   cld
   mov ebx, esp
-  add esp, -16
+  and esp, -16
   sub esp, 12
 
   push ebx
