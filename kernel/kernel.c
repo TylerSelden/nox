@@ -5,6 +5,7 @@
 // Header files
 #include <lib/panic.h>
 #include <lib/idt.h>
+#include <lib/kterm.h>
 #include <drivers/io.h>
 #include <drivers/pic.h>
 
@@ -18,7 +19,8 @@ void main(void) {
   vga_init();
   keyboard_init();
 
-  vga_prints("Welcome to Nox! Try typing some stuff!\n\n> ");
+  kterm_start();
+
 
   return;
 }

@@ -19,7 +19,7 @@ void vga_disable_cursor(void) {
   outb(0x3d5, 0x20);
 }
 
-void vga_set_cursor(uint8_t x, uint8_t y) {
+void vga_set_cursor(int8_t x, int8_t y) {
   uint16_t pos = y * VIDMEM_WIDTH + x;
 
   outb(0x3d4, 0x0f);
@@ -71,7 +71,7 @@ void vga_write_row(uint8_t row, char str) {
 
 void vga_clear() {
   for (uint8_t row = 0; row < VIDMEM_HEIGHT; row++) {
-    vga_write_row(row, ' ');
+    vga_write_row(row, 0);
   }
 }
 
@@ -103,7 +103,6 @@ static bool vga_special_char(char str, uint16_t addr, bool print) {
       vga_newl();
     }
   } else if (str == '\t') {
-    vga_puti(addr, 16, 10, 10);
     vidmem[addr] = ' ' | (color << 8);
     vidmem[addr + 1] = ' ' | (color << 8);
     if (print) {

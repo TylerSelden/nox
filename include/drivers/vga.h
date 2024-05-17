@@ -14,7 +14,7 @@ extern uint8_t color;
 void vga_enable_cursor(uint8_t start, uint8_t end);
 void vga_disable_cursor(void);
 
-void vga_set_cursor(uint8_t x, uint8_t y);
+void vga_set_cursor(int8_t x, int8_t y);
 void vga_set_cursor_x(uint8_t x);
 void vga_set_cursor_y(uint8_t y);
 

@@ -20,4 +20,7 @@ extern uint8_t kbd_buf[2];
 void keyboard_init();
 void keyboard_input();
 
+extern void (*keyboard_input_handler)();
+void dummy_keyboard_input_handler();
+
 #endif
