@@ -2,7 +2,6 @@
 #include <drivers/io.h>
 
 #include <drivers/vga.h>
-#include <lib/kterm.h>
 
 char kbd[84] = {
    0, 0, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 0,
@@ -58,7 +57,7 @@ void keyboard_input() {
     keyboard_caps = !keyboard_caps;
   }
 
-
+/*
   // debug block
   vga_puts("Scancode: 0x", 0, 22);
   vga_puti(scancode, 16, 12, 22);
@@ -66,7 +65,7 @@ void keyboard_input() {
   vga_puti(keyboard_shift, 10, 7, 23);
   vga_puts("Caps: ", 0, 24);
   vga_puti(keyboard_caps, 10, 7, 24);
-
+*/
 
 
  if (scancode >= 0x80) return; //released key
