@@ -6,6 +6,7 @@
 #include <lib/panic.h>
 #include <lib/idt.h>
 #include <lib/strings.h>
+#include <lib/kterm.h>
 #include <drivers/io.h>
 #include <drivers/pic.h>
 
@@ -18,6 +19,8 @@ void main(void) {
 
   vga_init();
   keyboard_init();
+
+  kterm_init();
 
   return;
 }

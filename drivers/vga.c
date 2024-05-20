@@ -73,6 +73,7 @@ void vga_clear() {
   for (uint8_t row = 0; row < VIDMEM_HEIGHT; row++) {
     vga_write_row(row, 0);
   }
+  vga_set_cursor(0, 0);
 }
 
 void vga_scroll() {
