@@ -8,7 +8,7 @@
 
 size_t strlen(char *str);
 
+bool strncmp(char *stra, char *strb, size_t len);
 bool strcmp(char *stra, char *strb);
-
 
 #endif

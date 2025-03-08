@@ -9,10 +9,18 @@ size_t strlen(char *str) {
   return len;
 }
 
-bool strcmp(char *stra, char *strb) {
-  while ((*stra == *strb) && *strb) {
+
+bool strncmp(char *stra, char *strb, size_t len) {
+  while ((*stra == *strb) && *strb && len > 0) {
+    if (*stra != *strb) return false;
+
     stra++;
     strb++;
+    len--;
   }
-  return (((int) (unsigned char) *stra) - ((int) (unsigned char) *strb) == 0);
+  return len == 0 || *stra == *strb;
+}
+
+bool strcmp(char *stra, char *strb) {
+  return strncmp(stra, strb, strlen(strb)) && strncmp(strb, stra, strlen(stra));
 }

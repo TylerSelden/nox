@@ -32,9 +32,19 @@ void kterm_init() {
 
 bool kterm_special_char() {
   if (kbd_buf[0] == 0x4b) {
+    // left
     if (vga_get_cursor_addr() > kterm_buf_start) vga_add_cursor_x(-1);
   } else if (kbd_buf[0] == 0x4d) {
     // right
+    if (vga_get_cursor_addr() < kterm_buf_end()) vga_add_cursor_x(1);
+  } else if (kbd_buf[0] == 0x0e) {
+    if (vga_get_cursor_addr() > kterm_buf_start) {
+      vga_putcr(0, vga_get_cursor_addr() - 1);
+      kterm_buf[vga_get_cursor_addr() - kterm_buf_start - 1] = 0;
+      //// shift everything over??
+
+      vga_add_cursor_x(-1);
+    }
   } else if (kbd_buf[1] == '\n') {
     // run cmd
     vga_printc('\n');
@@ -59,7 +69,16 @@ void kterm_run_cmd() {
     vga_prints("Success.\n");
   } else if (strcmp(kterm_buf, "clear")) {
     vga_clear();
-  } else if (strcmp(kterm_buf, "")) {
+  } else if (strcmp(kterm_buf, "help")) {
+    vga_prints("This command is in development :(\n");
+  } else if (strncmp(kterm_buf, "echo", 4)) {
+    // if there's actually something to print
+    if (*(kterm_buf + 4) == ' ') vga_prints(kterm_buf + 5);
+    vga_printc('\n');
+  } else if (strcmp(kterm_buf, "exit")) {
+    void (*reset)(void) = (void (*)(void)) 0xFFFF0;
+    reset();
+  } else if (strlen(kterm_buf) == 0) {
   } else {
     vga_prints("Command not found: \"");
     vga_prints(kterm_buf);

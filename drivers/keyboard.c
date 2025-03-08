@@ -37,12 +37,6 @@ void keyboard_init() {
   keyboard_input_handler = &dummy_keyboard_input_handler;
 }
 
-void dev_keybinds(char str) {
-  if (str == '~') {
-    __asm__ volatile ("movl $0, %eax; divl %eax");
-  }
-}
-
 void keyboard_input() { 
   uint8_t scancode = inb(KEYBOARD_DATA_PORT);
   kbd_buf[0] = scancode;
@@ -57,17 +51,6 @@ void keyboard_input() {
     keyboard_caps = !keyboard_caps;
   }
 
-/*
-  // debug block
-  vga_puts("Scancode: 0x", 0, 22);
-  vga_puti(scancode, 16, 12, 22);
-  vga_puts("Shift: ", 0, 23);
-  vga_puti(keyboard_shift, 10, 7, 23);
-  vga_puts("Caps: ", 0, 24);
-  vga_puti(keyboard_caps, 10, 7, 24);
-*/
-
-
  if (scancode >= 0x80) return; //released key
 
   // get char
@@ -78,10 +61,7 @@ void keyboard_input() {
     str = kbd_caps[scancode];
   }
 
-  // dev keybinds
-  dev_keybinds(str);
-
-  kbd_buf[1] = str;  
+  kbd_buf[1] = str;
 
   (*keyboard_input_handler)();
 }
