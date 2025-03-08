@@ -3,6 +3,8 @@ ENTRY(_start)
 SECTIONS {
   . = 2M;
 
+  kernel_start = .;
+
   .text BLOCK(4K) : ALIGN(4K) {
     *(.multiboot)
     *(.text)
@@ -20,4 +22,6 @@ SECTIONS {
     *(.COMMON)
     *(.bss)
   }
+
+  kernel_end = .;
 }
