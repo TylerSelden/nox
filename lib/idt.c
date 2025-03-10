@@ -33,7 +33,7 @@ void idt_init() {
 
 
 void exception_handler(idt_registers_t *state) {
-  panic(state->int_no, state->err_code);
+  panic_exc(state->int_no, state->err_code);
 }
 
 

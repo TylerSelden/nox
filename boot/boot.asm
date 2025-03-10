@@ -51,6 +51,7 @@ _start:
 
 
 .call_main:
+  push ebx
   extern main
 
   call main

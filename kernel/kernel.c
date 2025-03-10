@@ -13,7 +13,10 @@
 #include <drivers/vga.h>
 #include <drivers/keyboard.h>
 
-void main(void) {
+#include <lib/mem.h>
+#include <multiboot.h>
+
+void main(multiboot_info_t *mbi) {
   pic_init();
   idt_init();
 
@@ -21,6 +24,8 @@ void main(void) {
   keyboard_init();
 
   kterm_init();
+
+  mem_init(mbi);
 
   return;
 }

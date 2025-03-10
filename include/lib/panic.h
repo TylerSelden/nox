@@ -4,7 +4,8 @@
 
 #include <stdint.h>
 
-void panic(uint8_t num, uint8_t err);
+void panic(char *str);
+void panic_exc(uint8_t num, uint8_t err);
 
 
 #endif

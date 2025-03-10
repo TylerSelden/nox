@@ -68,9 +68,7 @@ void kterm_main() {
 
 void kterm_run_cmd() {
   if (strcmp(kterm_buf, "test")) {
-    vga_printi(&kernel_start, 16);
-    vga_printc('\n');
-    vga_printi(&kernel_end, 16);
+    vga_prints("SHUT UP COMPILER PLEASE AND TNAK YOU\n");
   } else if (strcmp(kterm_buf, "clear")) {
     vga_clear();
   } else if (strcmp(kterm_buf, "help")) {
