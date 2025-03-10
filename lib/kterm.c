@@ -5,7 +5,9 @@
 #include <lib/strings.h>
 #include <drivers/vga.h>
 #include <drivers/keyboard.h>
+#include <drivers/io.h>
 
+#include <multiboot.h>
 
 char kterm_buf[VIDMEM_SIZE];
 uint16_t kterm_buf_start = 0;
@@ -66,7 +68,9 @@ void kterm_main() {
 
 void kterm_run_cmd() {
   if (strcmp(kterm_buf, "test")) {
-    vga_prints("Success.\n");
+    vga_printi(&kernel_start, 16);
+    vga_printc('\n');
+    vga_printi(&kernel_end, 16);
   } else if (strcmp(kterm_buf, "clear")) {
     vga_clear();
   } else if (strcmp(kterm_buf, "help")) {
@@ -76,8 +80,7 @@ void kterm_run_cmd() {
     if (*(kterm_buf + 4) == ' ') vga_prints(kterm_buf + 5);
     vga_printc('\n');
   } else if (strcmp(kterm_buf, "exit")) {
-    void (*reset)(void) = (void (*)(void)) 0xFFFF0;
-    reset();
+    outb(0x64, 0xfe);
   } else if (strlen(kterm_buf) == 0) {
   } else {
     vga_prints("Command not found: \"");
