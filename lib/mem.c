@@ -13,6 +13,7 @@ void mem_init(multiboot_info_t *mbi) {
   memory_map_t *mmap = (memory_map_t *)mbi->mmap_addr;
 
   printf("\nMemory map:\n mem_lower: 0x%x\n mem_upper: 0x%x\n", mbi->mem_lower, mbi->mem_upper);
+  printf("Kernel memory:\n lower: %x\n upper: %x\n", &kernel_start, &kernel_end);
 
   // Loop through the memory map entries
   while (mmap_size > 0) {
