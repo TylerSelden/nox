@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdarg.h>
 #include <drivers/vga.h>
 #include <drivers/io.h>
 
@@ -209,6 +210,59 @@ void vga_printi(uint32_t num, uint8_t base) {
   }
 
   vga_prints(&buffer[i]);
+}
+
+void printf(const char *str, ...) {
+  va_list args;
+  va_start(args, str);
+
+  while (*str) {
+    if (*str == '\\') {
+      str++;
+      if (*str == '%') {
+        vga_printc('%');
+      } else if (*str == '\\') {
+        vga_printc('\\');
+      } else {
+        vga_printc('\\');
+        vga_printc(*str);
+      }
+    } else if (*str == '%') {
+      str++;
+      switch (*str) {
+        case 'c': {
+          char c = (char) va_arg(args, int);
+          vga_printc(c);
+          break;
+        }
+        case 's': {
+          char *s = va_arg(args, char *);
+          vga_prints(s);
+          break;
+        }
+        case 'd': {
+          int num = va_arg(args, int);
+          vga_printi(num, 10);
+          break;
+        }
+        case 'x': {
+          int num = va_arg(args, int);
+          vga_printi(num, 16);
+          break;
+        }
+        default:
+          vga_printc('%');
+          vga_printc(*str);
+          break;
+      }
+    } else {
+      vga_printc(*str);
+    }
+    str++;
+  }
+
+  va_end(args);
+  vga_printc('\n');
 }
 
 void vga_init() {

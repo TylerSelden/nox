@@ -43,6 +43,8 @@ void vga_puti(uint32_t num, uint8_t base, uint8_t x, uint8_t y);
 void vga_putir(uint32_t num, uint8_t base, uint16_t addr);
 void vga_printi(uint32_t num, uint8_t base);
 
+void vga_printf(const char *fmt, ...);
+
 void vga_init();
 
 

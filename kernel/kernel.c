@@ -17,6 +17,7 @@
 #include <multiboot.h>
 
 void main(multiboot_info_t *mbi) {
+
   pic_init();
   idt_init();
 
