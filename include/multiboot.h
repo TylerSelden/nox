@@ -122,8 +122,8 @@ typedef struct memory_map
 
 // custom stuff
 
-extern uintptr_t kernel_start;
-extern uintptr_t kernel_end;
+extern uintptr_t _kernel_start;
+extern uintptr_t _kernel_end;
 
 #endif /* ! ASM */
 
