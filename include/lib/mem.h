@@ -3,6 +3,8 @@
 
 #include <multiboot.h>
 
+#define MAX_MMAP_ENTRIES 64
+
 typedef struct {
   uint64_t start;
   uint64_t end;
