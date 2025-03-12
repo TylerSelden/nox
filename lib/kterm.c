@@ -7,7 +7,7 @@
 #include <drivers/keyboard.h>
 #include <drivers/io.h>
 
-#include <multiboot.h>
+#include <lib/mem.h>
 
 char kterm_buf[VIDMEM_SIZE];
 uint16_t kterm_buf_start = 0;
@@ -77,6 +77,8 @@ void kterm_run_cmd() {
     // if there's actually something to print
     if (*(kterm_buf + 4) == ' ') vga_prints(kterm_buf + 5);
     vga_printc('\n');
+  } else if (strcmp(kterm_buf, "mem")) {
+    printf("Total usable system memory: %dMB", mem_amt / 1000000);
   } else if (strcmp(kterm_buf, "exit")) {
     outb(0x64, 0xfe);
   } else if (strlen(kterm_buf) == 0) {

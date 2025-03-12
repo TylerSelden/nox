@@ -16,6 +16,7 @@ multiboot_memory_map_t *entries[MAX_ENTRIES];
 uint8_t entry_count = 0;
 mem_range_t ranges[32];
 uint8_t range_count = 0;
+uintptr_t mem_amt = 0;
 
 
 static void sort_entries(multiboot_memory_map_t *entries[], uint32_t count) {
@@ -73,12 +74,6 @@ void mem_init(multiboot_info_t *mbi) {
   extract_usable(); 
 
 
-  uintptr_t size = 0;
-  printf("Ussable Memory Ranges:");
-  for (uint32_t i = 0; i < range_count; i++) {
-    size += ranges[i].end - ranges[i].start;
-    printf("Start: 0x%x, End: 0x%x, Size: %dMB", (uint32_t)ranges[i].start, (uint32_t)ranges[i].end, (uint32_t)(ranges[i].end - ranges[i].start) / 1000000);
-  }
-  printf("Total writable size: %dMB", size / 1000000);
+  for (uint32_t i = 0; i < range_count; i++) mem_amt += ranges[i].end - ranges[i].start;
 }
 

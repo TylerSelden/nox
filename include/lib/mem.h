@@ -1,11 +1,10 @@
-#ifndef LIB_MEM_C
-#define LIB_MEM_C
+#ifndef LIB_MEM_H
+#define LIB_MEM_H
 
 #include <multiboot.h>
 
-#define MAX_MMAP_ENTRIES 64
+extern uintptr_t mem_amt;
 
-void sort_mmap_entries(multiboot_memory_map_t *entries[], uint32_t count);
 void mem_init(multiboot_info_t *mbi);
 
 #endif
