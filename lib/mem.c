@@ -58,9 +58,12 @@ void mem_init(multiboot_info_t *mbi) {
     }
   }
 
+  uintptr_t size = 0;
   printf("Usable Memory Ranges:");
   for (uint32_t i = 0; i < range_count; i++) {
-    printf("Start: 0x%x, End: 0x%x", (uint32_t)ranges[i].start, (uint32_t)ranges[i].end);
+    size += ranges[i].end - ranges[i].start;
+    printf("Start: 0x%x, End: 0x%x, Size: %dMB", (uint32_t)ranges[i].start, (uint32_t)ranges[i].end, (uint32_t)(ranges[i].end - ranges[i].start) / 1000000);
   }
+  printf("Total writable size: %dMB", size / 1000000);
 }
 
