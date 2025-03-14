@@ -66,6 +66,7 @@ void kterm_main() {
   vga_printc(kbd_buf[1]);
 }
 
+
 void kterm_run_cmd() {
   if (strcmp(kterm_buf, "test")) {
     vga_prints("SHUT UP COMPILER PLEASE AND TNAK YOU\n");
@@ -78,7 +79,7 @@ void kterm_run_cmd() {
     if (*(kterm_buf + 4) == ' ') vga_prints(kterm_buf + 5);
     vga_printc('\n');
   } else if (strcmp(kterm_buf, "mem")) {
-    printf("Total usable system memory: %dMB", mem_amt / 1000000);
+    printf("Total usable system memory: %dMB", (mem_blocks_total * PAGE_SIZE) / 0x100000);
   } else if (strcmp(kterm_buf, "exit")) {
     outb(0x64, 0xfe);
   } else if (strlen(kterm_buf) == 0) {

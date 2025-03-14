@@ -3,7 +3,9 @@
 
 #include <multiboot.h>
 
-extern uintptr_t mem_amt;
+#define PAGE_SIZE 4096
+
+extern uintptr_t mem_blocks_total;
 
 void mem_init(multiboot_info_t *mbi);
 
