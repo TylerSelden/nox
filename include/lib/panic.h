@@ -6,6 +6,7 @@
 
 void panic(char *str);
 void panic_exc(uint8_t num, uint8_t err);
+void halt();
 
 
 #endif

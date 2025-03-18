@@ -22,7 +22,7 @@ mem_range_t ranges[MAX_ENTRIES];
 uint8_t range_count = 0;
 size_t mem_blocks_total = 0;
 size_t bm_len = 0;
-uint8_t *bitmap = (uint8_t*) -1;
+uint8_t *bitmap = NULL;
 
 
 static void sort_entries(multiboot_memory_map_t *entries[], uint32_t count) {
@@ -59,7 +59,11 @@ static void extract_usable() {
     // skip reserved regions.
     if (mmap->type != 1) continue;
     uint64_t start = mmap->addr;
-    uint64_t end   = mmap->addr + mmap->len;
+    uint64_t end = mmap->addr + mmap->len;
+
+    // prevent interference with null pointers
+    if (start == 0) start += PAGE_SIZE;
+
     if (end <= start) continue;
 
     // check for kernel overlaps
@@ -73,24 +77,14 @@ static void extract_usable() {
 }
 
 uint8_t *get_byte(uintptr_t index) {
-  if ((size_t) index >= bm_len) {
-    panic("Kernel memory allocator accessed a byte out-of-bounds.");
-  }
-
-  index /= 8;
-
-  uint8_t *byte = (uint8_t*) (bitmap + index);
-  return byte;
+  if ((size_t) index >= (size_t) bitmap + mem_blocks_total) panic("Kernel memory allocator tried to access a bitmap value that is out-of-bounds.");
+  return (uint8_t*) bitmap + (index / 8);
 }
-
 void set_bit(uintptr_t index, bool val) {
   uint8_t *byte = get_byte(index);
   uint8_t bit = index % 8;
-  if (val) {
-    *byte = *byte | (1U << bit);
-  } else {
-    *byte = *byte & ~(1U << bit);
-  }
+  if (val) *byte = *byte | (1U << bit);
+  else *byte = *byte & ~(1U << bit);
 }
 bool get_bit(uintptr_t index) {
   uint8_t *byte = get_byte(index);
@@ -98,7 +92,32 @@ bool get_bit(uintptr_t index) {
 
   return (*byte & (1U << bit)) != 0;
 }
+uintptr_t get_addr(uintptr_t index) {
+  if ((size_t) index >= (size_t) bitmap + mem_blocks_total) panic("Kernel memory allocator tried to access a bitmap value that is out-of-bounds.");
 
+  uint8_t base = 0;
+  while (index >= ranges[base].block_count) {
+    index -= ranges[base].block_count;
+    base++;
+  }
+
+  return ranges[base].start + (index * PAGE_SIZE);
+}
+uintptr_t get_index(uintptr_t addr) {
+  uint8_t base = 0;
+  while (base < range_count) {
+    if (addr >= ranges[base].start && addr < ranges[base].end) {
+      uintptr_t index = (addr - ranges[base].start) / PAGE_SIZE;
+      for (uint8_t i = 0; i < base; i++) index += ranges[i].block_count;
+
+      return index;
+    }
+    base++;
+  }
+
+  panic("Kernel memory allocator tried to access an unwritable page.");
+  return 0; // keeps the compiler happy
+}
 
 
 void create_bitmap() {
@@ -117,14 +136,34 @@ void create_bitmap() {
       break;
     }
   }
-  if (bitmap == (uint8_t*) -1) panic("Usable memory segments are too small for the memory allocation bitmap.");
+  if (bitmap == NULL) panic("Usable memory segments are too small for the memory allocation bitmap.");
 
-  // zero out bitmap
+  // zero out bitmap and reserve pages containing it
   for (uint8_t *i = bitmap; i < (uint8_t*) (bitmap + bm_len); i++) *i = 0;
-
-  // reserve the section that contains the bitmap (NOT ALWAYS the first block)
   size_t bm_pages = (bm_len + PAGE_SIZE - 1) / PAGE_SIZE;
   for (uintptr_t i = 0; i < bm_pages; i++) set_bit(i, 1);
+}
+
+
+
+void *kmalloc() {
+  for (uint8_t *i = bitmap; i < (uint8_t*) (bitmap + bm_len); i++) {
+    if (*i == 0xff) continue;
+
+    // figure out which bit is a 0
+    uintptr_t base = ((uintptr_t) i - (uintptr_t) bitmap) * 8;
+    for (uintptr_t j = base; j < base + 8; j++) {
+      if (get_bit(j) == 0) {
+        set_bit(j, 1);
+        return get_addr(j);
+      }
+    }
+  }
+  return 0;
+}
+
+void kfree(uintptr_t addr) {
+  set_bit(get_index(addr), 0);
 }
 
 void mem_init(multiboot_info_t *mbi) {
@@ -134,14 +173,4 @@ void mem_init(multiboot_info_t *mbi) {
   sort_entries(entries, entry_count);
   extract_usable();
   create_bitmap();
-
-  // test stuff
-  printf("%dMB allocated, with %d bit (%d page) bitmap.",
-         (mem_blocks_total * PAGE_SIZE) / 1048576,
-         bm_len,
-         (bm_len + PAGE_SIZE - 1) / PAGE_SIZE);
-  for (int i = 0; i < 8; i++) {
-    printf("Test bit %d: %d", i, get_bit(i));
-  }
 }
-

@@ -62,3 +62,6 @@ void panic_exc(uint8_t num, uint8_t err) {
   __asm__ volatile ("cli; hlt");
 }
 
+void halt() {
+  __asm__ volatile ("cli; hlt");
+}
