@@ -69,11 +69,18 @@ void kterm_main() {
 
 void kterm_run_cmd() {
   if (strcmp(kterm_buf, "test")) {
-    vga_prints("SHUT UP COMPILER PLEASE AND TNAK YOU\n");
+    for (size_t i = 0; i < mem_blocks_total; i++) {
+      if (kmalloc() == 0) {
+        printf("OUT OF MEMORY!");
+        break;
+      }
+    }
   } else if (strcmp(kterm_buf, "clear")) {
     vga_clear();
   } else if (strcmp(kterm_buf, "help")) {
     vga_prints("This command is in development :(\n");
+  } else if (strcmp(kterm_buf, "mem")) {
+    printf("Blocks available: %d/%d\nBytes available: %d/%d", mem_blocks_open, mem_blocks_total, mem_blocks_open * PAGE_SIZE, mem_blocks_total * PAGE_SIZE);
   } else if (strncmp(kterm_buf, "echo", 4)) {
     // if there's actually something to print
     if (*(kterm_buf + 4) == ' ') vga_prints(kterm_buf + 5);

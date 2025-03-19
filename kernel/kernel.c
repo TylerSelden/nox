@@ -2,7 +2,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-// Header files
 #include <lib/panic.h>
 #include <lib/idt.h>
 #include <lib/strings.h>
@@ -17,6 +16,7 @@
 #include <multiboot.h>
 
 void main(multiboot_info_t *mbi) {
+  mem_init(mbi);
 
   pic_init();
   idt_init();
@@ -26,6 +26,5 @@ void main(multiboot_info_t *mbi) {
 
   kterm_init();
 
-  mem_init(mbi);
   return;
 }
