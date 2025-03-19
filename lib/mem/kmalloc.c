@@ -21,7 +21,7 @@ uint8_t entry_count = 0;
 mem_range_t ranges[MAX_ENTRIES];
 uint8_t range_count = 0;
 size_t mem_blocks_total = 0;
-size_t mem_blocks_open = 0;
+size_t mem_blocks_free = 0;
 size_t bm_len = 0;
 uint8_t *bitmap = NULL;
 
@@ -129,7 +129,7 @@ void create_bitmap() {
     ranges[i].block_count = count;
   }
   mem_blocks_total = (mem_blocks_total / 8) * 8;
-  mem_blocks_open = mem_blocks_total;
+  mem_blocks_free = mem_blocks_total;
   bm_len = mem_blocks_total / 8;
 
   // find a safe place to put the index
@@ -145,7 +145,7 @@ void create_bitmap() {
   for (uint8_t *i = bitmap; i < (uint8_t*) (bitmap + bm_len); i++) *i = 0;
   size_t bm_pages = (bm_len + PAGE_SIZE - 1) / PAGE_SIZE;
   for (uintptr_t i = 0; i < bm_pages; i++) set_bit(i, 1);
-  mem_blocks_open -= bm_pages;
+  mem_blocks_free -= bm_pages;
 }
 
 
@@ -168,7 +168,7 @@ void *kmalloc() {
     for (uintptr_t j = base; j < base + 8; j++) {
       if (get_bit(j) == 0) {
         set_bit(j, 1);
-        mem_blocks_open--;
+        mem_blocks_free--;
         return (void*) get_addr(j);
       }
     }
@@ -181,5 +181,5 @@ void kfree(uintptr_t addr) {
   if (!get_bit(index)) return;
 
   set_bit(index, 0);
-  mem_blocks_open++;
+  mem_blocks_free++;
 }

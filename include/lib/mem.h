@@ -6,7 +6,7 @@
 #define PAGE_SIZE 4096
 
 extern size_t mem_blocks_total;
-extern size_t mem_blocks_open;
+extern size_t mem_blocks_free;
 
 void mem_init(multiboot_info_t *mbi);
 void *kmalloc();

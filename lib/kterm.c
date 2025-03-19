@@ -80,7 +80,7 @@ void kterm_run_cmd() {
   } else if (strcmp(kterm_buf, "help")) {
     vga_prints("This command is in development :(\n");
   } else if (strcmp(kterm_buf, "mem")) {
-    printf("Blocks available: %d/%d\nBytes available: %d/%d", mem_blocks_open, mem_blocks_total, mem_blocks_open * PAGE_SIZE, mem_blocks_total * PAGE_SIZE);
+    printf("Blocks available: %d/%d\nBytes available: %d/%d", mem_blocks_free, mem_blocks_total, mem_blocks_free * PAGE_SIZE, mem_blocks_total * PAGE_SIZE);
   } else if (strncmp(kterm_buf, "echo", 4)) {
     // if there's actually something to print
     if (*(kterm_buf + 4) == ' ') vga_prints(kterm_buf + 5);
