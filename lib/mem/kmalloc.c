@@ -62,8 +62,9 @@ static void extract_usable() {
     uint64_t start = mmap->addr;
     uint64_t end = mmap->addr + mmap->len;
 
-    // prevent interference with null pointers
+    // prevent null pointer and align to PAGE_SIZE
     if (start == 0) start += PAGE_SIZE;
+    start = (start + PAGE_SIZE - 1) & ~(PAGE_SIZE - 1);
 
     if (end <= start) continue;
 
