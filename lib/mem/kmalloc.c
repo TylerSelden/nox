@@ -160,6 +160,8 @@ void mem_init(multiboot_info_t *mbi) {
 }
 
 void *kmalloc() {
+  if (mem_blocks_free == 0) return 0;
+
   for (uint8_t *i = bitmap; i < (uint8_t*) (bitmap + bm_len); i++) {
     if (*i == 0xff) continue;
 
