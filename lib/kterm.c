@@ -69,12 +69,14 @@ void kterm_main() {
 
 void kterm_run_cmd() {
   if (strcmp(kterm_buf, "test")) {
-    for (size_t i = 0; i < mem_blocks_total; i++) {
+    for (size_t i = 0; i < mem_blocks_total - 1; i++) {
       if (kmalloc() == 0) {
         printf("OUT OF MEMORY!");
         break;
       }
     }
+  } else if (strcmp(kterm_buf, "init")) {
+    vmalloc_init();
   } else if (strcmp(kterm_buf, "clear")) {
     vga_clear();
   } else if (strcmp(kterm_buf, "help")) {

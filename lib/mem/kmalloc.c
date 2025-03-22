@@ -2,7 +2,6 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <lib/mem.h>
-#include <drivers/vga.h>
 #include <multiboot.h>
 #include <lib/panic.h>
 
@@ -151,7 +150,7 @@ void create_bitmap() {
 
 
 
-void mem_init(multiboot_info_t *mbi) {
+void kmalloc_init(multiboot_info_t *mbi) {
   if (!(mbi->flags & 0x41)) panic("Essential memory information is not available.");
 
   extract_entries(mbi);

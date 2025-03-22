@@ -16,7 +16,7 @@
 #include <multiboot.h>
 
 void main(multiboot_info_t *mbi) {
-  mem_init(mbi);
+  kmalloc_init(mbi);
 
   pic_init();
   idt_init();

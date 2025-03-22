@@ -8,8 +8,10 @@
 extern size_t mem_blocks_total;
 extern size_t mem_blocks_free;
 
-void mem_init(multiboot_info_t *mbi);
+void kmalloc_init(multiboot_info_t *mbi);
 void *kmalloc();
 void kfree(uintptr_t addr);
+
+void vmalloc_init();
 
 #endif
