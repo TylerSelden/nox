@@ -5,6 +5,9 @@
 #include <drivers/vga.h>
 #include <lib/panic.h>
 
+#define PD_IDX(virt) ((virt) >> 22)
+#define PT_IDX(virt) (((virt) >> 12) & 0x3ff)
+
 typedef struct {
   unsigned int p    : 1;  //     0: Present
   unsigned int rw   : 1;  //     1: Read/Write
@@ -43,22 +46,17 @@ void create_passthrough() {
   size_t kernel_size = &_kernel_end - &_kernel_start;
   uint16_t kernel_pages = (kernel_size + PAGE_SIZE - 1) / PAGE_SIZE;
 
-  for (uint16_t i = 0; i < 1024; i++) {
-    dir[i].p = 0;
-    table[i].p = 0;
-  }
-
   // vidmem passthrough
-  dir[0] = (dir_entry) {
+  dir[PD_IDX(VIDMEM_START)] = (dir_entry) {
     .p = 1,
     .rw = 1,
     .us = 0,
     .pwt = 0,
     .pcd = 1,
     .ps = 0,
-    .addr = ((uintptr_t) table >> 12) & 0xfffff
+    .addr = (uintptr_t) table >> 12
   };
-  table[0] = (table_entry) {
+  table[PT_IDX(VIDMEM_START)] = (table_entry) {
     .p = 1,
     .rw = 1,
     .us = 0,
@@ -66,21 +64,23 @@ void create_passthrough() {
     .pcd = 1,
     .pat = 0,
     .g = 1,
-    .addr = 0xb8000
+    .addr = VIDMEM_START >> 12
   };
 
   // kernel passthrough
   for (uint16_t i = 1; i <= kernel_pages; i++) {
-    dir[i] = (dir_entry) {
+    uintptr_t addr = (uintptr_t) &_kernel_start + (i * PAGE_SIZE);
+
+    dir[PD_IDX(addr)] = (dir_entry) {
       .p = 1,
       .rw = 1,
       .us = 0,
       .pwt = 0,
       .pcd = 0,
       .ps = 0,
-      .addr = ((uintptr_t) table >> 12) & 0xfffff
+      .addr = (uintptr_t) table >> 12
     };
-    table[i] = (table_entry) {
+    table[PT_IDX(addr)] = (table_entry) {
       .p = 1,
       .rw = 1,
       .us = 0,
@@ -88,7 +88,7 @@ void create_passthrough() {
       .pcd = 0,
       .pat = 0,
       .g = 1,
-      .addr = ((_kernel_start + (i * PAGE_SIZE)) >> 12) & 0xfffff
+      .addr = addr >> 12
     };
   }
 
@@ -102,8 +102,6 @@ void create_passthrough() {
     : "r" (dir)                 // pass in dir pointer
     : "eax"                     // clobbers EAX register
   );
-
-  printf("Test value: %d", dir[0].addr);
 }
 
 void vmalloc_init() {
