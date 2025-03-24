@@ -69,6 +69,8 @@ void kterm_main() {
 
 void kterm_run_cmd() {
   if (strcmp(kterm_buf, "test")) {
+    printf("Kernel start value: 0x%x", (uint32_t) _kernel_start);
+  } else if (strcmp(kterm_buf, "memtest")) {
     for (size_t i = 0; i < mem_blocks_total - 1; i++) {
       if (kmalloc() == 0) {
         printf("OUT OF MEMORY!");
