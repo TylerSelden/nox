@@ -43,7 +43,7 @@ void create_passthrough() {
   table = kmalloc();
   if (!dir || !table) panic("Not enough memory to inizialize paging.");
 
-  size_t kernel_size = &_kernel_end - &_kernel_start;
+  size_t kernel_size = (uintptr_t) &_kernel_end - (uintptr_t) &_kernel_start;
   uint16_t kernel_pages = (kernel_size + PAGE_SIZE - 1) / PAGE_SIZE;
 
   // vidmem passthrough
@@ -68,7 +68,7 @@ void create_passthrough() {
   };
 
   // kernel passthrough
-  for (uint16_t i = 1; i <= kernel_pages; i++) {
+  for (uint16_t i = 0; i < kernel_pages; i++) {
     uintptr_t addr = (uintptr_t) &_kernel_start + (i * PAGE_SIZE);
 
     dir[PD_IDX(addr)] = (dir_entry) {
@@ -94,13 +94,13 @@ void create_passthrough() {
 
   // enable paging
   asm volatile (
-    "mov %0, %%cr3\n\t"         // load page directory address into CR3
-    "mov %%cr0, %%eax\n\t"      // copy CR0 into EAX
-    "or $0x80000000, %%eax\n\t" // set the PG bit (bit 31) in EAX
-    "mov %%eax, %%cr0\n\t"      // write modified value back to CR0
+    "mov %0, %%cr3\n\t"
+    "mov %%cr0, %%eax\n\t"
+    "or $0x80000000, %%eax\n\t"
+    "mov %%eax, %%cr0\n\t"
     :
-    : "r" (dir)                 // pass in dir pointer
-    : "eax"                     // clobbers EAX register
+    : "r" (dir)
+    : "eax"
   );
 }
 

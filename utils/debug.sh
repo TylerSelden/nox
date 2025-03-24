@@ -2,6 +2,7 @@
 
 set -m
 echo " - STARTING -"
+echo " (remember to run ./utils/gdb.sh)"
 
 ./utils/websockify/run --cert /etc/letsencrypt/live/benti.dev-0003/cert.pem --key /etc/letsencrypt/live/benti.dev-0003/privkey.pem 9000 localhost:5900 >/dev/null 2>&1 &
 websockify_pid=$!
