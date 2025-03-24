@@ -25,7 +25,7 @@ ld:
 
 grub:
 	@cp ./output/os.bin ./utils/grub/boot/os.bin
-	@grub-mkrescue -o ./output/os.iso ./utils/grub
+	@grub-mkrescue -o ./output/os.iso ./utils/grub 2> /dev/null
 
 
 
